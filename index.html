@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presso - Comandă Online</title>
+    <meta name="description" content="Comandă cafeaua preferată online din meniul nostru variat.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div style="display: flex; justify-content: center; align-items: center; padding: 0;">
+            <img src="assets/logo.jpeg" alt="Presso Coffee Cart" style="height: 160px; width: auto; object-fit: contain; mix-blend-mode: multiply;">
+        </div>
+        <nav style="margin-top: 0.5rem; display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-left: 2rem;">
+            <a href="acasa.html" class="nav-link">Acasă</a>
+            <a href="index.html" class="nav-link active">Meniu Cafea</a>
+            <a href="oferta.html" class="nav-link">Cere Ofertă</a>
+        </nav>
+    </header>
+
+    <main class="container main-offset" id="main-content">
+        <div id="active-order-banner" class="active-order-banner" style="display: none;">
+            <!-- Active order details injected by JS -->
+        </div>
+
+        <div class="menu-grid" id="menu-grid">
+            <!-- Items injected by JS -->
+        </div>
+    </main>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-content">
+            <div style="width: 100%; height: 240px; overflow: hidden; border-radius: 8px; margin-bottom: 1.5rem; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                <img id="modal-image" src="" alt="Imagine Produs" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+            </div>
+            <h2 id="modal-title" style="margin-bottom: 1rem;">Finalizare Comandă</h2>
+            <p id="modal-item-desc" style="color: var(--text-muted); margin-bottom: 1.5rem;"></p>
+            
+            <form id="checkout-form">
+                <input type="hidden" id="item-id">
+                
+                <div class="form-group" id="espresso-options" style="display: none;">
+                    <label>Tip Espresso</label>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
+                            <input type="radio" name="espresso-type" value="Single" checked style="width: auto; padding: 0;"> Single
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
+                            <input type="radio" name="espresso-type" value="Double" style="width: auto; padding: 0;"> Double
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="aroma-options" style="display: none;">
+                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block; font-family: 'Inter', sans-serif;">Adaugă aromă</label>
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
+                        <span style="font-size: 1.3rem; line-height: 1;">+</span>
+                        <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Caramel Sărat</span>
+                        <input type="checkbox" id="aroma-caramel" name="aroma-type" value="Caramel Sărat" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer-name">Numele Tău</label>
+                    <input type="text" id="customer-name" required placeholder="ex: Andrei" autocomplete="off">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel">Anulează</button>
+                    <button type="submit" class="btn" id="btn-confirm-order">Confirmă Comanda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="client.js"></script>
+    <script>
+        const header = document.querySelector('header');
+        const main = document.getElementById('main-content');
+        function initHeader() {
+            const h = header.offsetHeight;
+            main.style.paddingTop = h + 'px';
+        }
+        initHeader();
+        window.addEventListener('resize', initHeader);
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const nav = header.querySelector('nav');
+            const maxTranslate = nav ? nav.offsetTop - 16 : header.offsetHeight;
+            header.style.transform = `translateY(-${Math.min(scrollY, maxTranslate)}px)`;
+        });
+    </script>
+</body>
+</html>

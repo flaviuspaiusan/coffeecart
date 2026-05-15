@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Cafenea</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Admin overrides */
+        header { position: sticky !important; transform: none !important; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Panou Comenzi</h1>
+        <p>Aici apar comenzile plasate de clienți, în timp real.</p>
+    </header>
+
+    <main class="container">
+        <div class="admin-sections" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+            <button class="btn" id="tab-orders" onclick="switchTab('orders')" style="flex: 1; min-width: 150px;">Comenzi</button>
+            <button class="btn btn-secondary" id="tab-offers" onclick="switchTab('offers')" style="flex: 1; min-width: 150px;">Cereri Oferte</button>
+            <button class="btn btn-secondary" id="tab-menu" onclick="switchTab('menu')" style="flex: 1; min-width: 150px;">Gestionare Meniu</button>
+        </div>
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
+            <div>
+                <p style="font-size: 1.25rem; font-weight: 700; font-family: 'Inter', sans-serif;" id="ordering-status-text">Comenzi Active</p>
+            </div>
+            <button id="ordering-toggle-btn" onclick="toggleOrdering()" style="margin-left: auto; padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; border: none; font-size: 0.95rem;">Se încarcă...</button>
+        </div>
+
+        <div id="section-orders">
+            <div class="admin-header">
+                <h2>Comenzi Recente</h2>
+                <button class="btn btn-secondary" onclick="clearOrders()" style="width: auto;">Șterge toate comenzile</button>
+            </div>
+            
+            <div class="orders-list" id="orders-list">
+                <!-- Orders injected by JS -->
+            </div>
+        </div>
+
+        <div id="section-menu" style="display: none;">
+            <div class="admin-header">
+                <h2>Meniu</h2>
+                <button class="btn" onclick="openMenuModal()" style="width: auto;">Adaugă Produs Nou</button>
+            </div>
+            
+            <div class="menu-grid" id="admin-menu-list">
+                <!-- Menu injected by JS -->
+            </div>
+        </div>
+
+        <div id="section-offers" style="display: none;">
+            <div class="admin-header">
+                <h2>Cereri Oferte Evenimente</h2>
+                <button class="btn btn-secondary" onclick="clearOffers()" style="width: auto;">Șterge toate cererile</button>
+            </div>
+            
+            <div class="orders-list" id="offers-list">
+                <!-- Offers injected by JS -->
+            </div>
+        </div>
+
+        <!-- Menu Modal -->
+        <div class="modal-overlay" id="menu-modal">
+            <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+                <h2 id="menu-modal-title" style="margin-bottom: 1rem;">Adaugă Produs Nou</h2>
+                
+                <form id="menu-form">
+                    <input type="hidden" id="menu-item-id">
+                    
+                    <div class="form-group">
+                        <label for="menu-name">Denumire</label>
+                        <input type="text" id="menu-name" required autocomplete="off">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="menu-desc">Descriere</label>
+                        <textarea id="menu-desc" required style="width: 100%; padding: 0.85rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); resize: vertical; font-family: 'Inter', sans-serif;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="menu-image">Imagine</label>
+                        <input type="file" id="menu-image" accept="image/*" style="margin-bottom: 0.5rem;">
+                        <input type="hidden" id="menu-image-data">
+                        <div id="image-preview-container" style="display: none; margin-top: 10px;">
+                            <img id="image-preview" style="max-width: 100px; border-radius: 8px;">
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeMenuModal()">Anulează</button>
+                        <button type="submit" class="btn">Salvează Produs</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>

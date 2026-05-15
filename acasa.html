@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presso Coffee Cart - Acasă</title>
+    <meta name="description" content="Presso Coffee Cart - Experiențe de cafea de neuitat pentru evenimentele tale. Corporate, nunți, lansări și multe altele.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 60% 40%, rgba(93,122,78,0.12) 0%, transparent 70%),
+                        radial-gradient(ellipse at 20% 80%, rgba(93,122,78,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-eyebrow {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--primary-green);
+            margin-bottom: 1.2rem;
+            opacity: 0;
+            animation: fadeUp 0.7s 0.2s forwards;
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3.2rem, 9vw, 6rem);
+            line-height: 1.05;
+            color: var(--text-main);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.3s forwards;
+            max-width: 900px;
+        }
+        .hero-title em {
+            color: var(--primary-green);
+            font-style: italic;
+        }
+        .hero-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            font-weight: 300;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 3.5rem;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.5s forwards;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeUp 0.7s 0.8s forwards;
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            transition: background 0.25s, color 0.25s;
+            display: inline-block;
+        }
+        .btn-outline:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        .hero-scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            animation: bounce 2s infinite;
+        }
+        .hero-scroll-hint svg { width: 20px; height: 20px; }
+
+        /* ── GALLERY STRIP ── */
+        .gallery-strip {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr;
+            grid-template-rows: 320px 320px;
+            gap: 8px;
+            margin: 4rem 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .gallery-strip img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease, filter 0.3s;
+            filter: brightness(0.93);
+        }
+        .gallery-strip img:hover {
+            transform: scale(1.04);
+            filter: brightness(1);
+        }
+        .gallery-strip .g-tall {
+            grid-row: 1 / 3;
+        }
+
+        /* ── SECTION LABELS ── */
+        .section-eyebrow {
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--primary-green);
+            margin-bottom: 0.75rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            line-height: 1.1;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+        }
+        .section-body {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.8;
+            max-width: 560px;
+        }
+
+        /* ── STORY SECTION ── */
+        .story-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+            padding: 8rem 0;
+            border-top: 1px solid var(--glass-border);
+        }
+        .story-image-wrap {
+            position: relative;
+        }
+        .story-image-wrap img {
+            width: 100%;
+            height: 560px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* ── SERVICES ── */
+        .services-section {
+            padding: 8rem 0;
+            border-top: 1px solid var(--glass-border);
+        }
+        .services-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .services-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .service-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem 1.2rem;
+            text-align: center;
+            transition: transform 0.25s, box-shadow 0.25s;
+            flex: 1 1 140px;
+            max-width: 180px;
+        }
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 35px rgba(93,122,78,0.06);
+        }
+        .service-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            color: var(--primary-green);
+            opacity: 0.85;
+            font-weight: 300;
+        }
+        .service-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+        .service-card p {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ── PHOTO MOSAIC ── */
+        .mosaic-section {
+            padding: 8rem 0;
+            border-top: 1px solid var(--glass-border);
+        }
+        .mosaic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 300px 300px;
+            gap: 12px;
+            margin-top: 2.5rem;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .mosaic-grid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s, filter 0.3s;
+            filter: brightness(0.92);
+        }
+        .mosaic-grid img:hover {
+            transform: scale(1.04);
+            filter: brightness(1);
+        }
+        /* spanning cells */
+        .mosaic-grid .m-wide  { grid-column: 1 / 3; }
+        .mosaic-grid .m-tall  { grid-row: span 2; }
+        .mosaic-grid .m-full  { grid-column: 1 / 4; }
+
+        /* ── CTA BANNER ── */
+        .cta-section {
+            margin: 4rem 0;
+            background: var(--primary-green);
+            border-radius: 20px;
+            padding: 4rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.08), transparent 60%);
+        }
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            color: white;
+            margin-bottom: 1rem;
+        }
+        .cta-section p {
+            font-family: 'Inter', sans-serif;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-white {
+            background: white;
+            color: var(--primary-green);
+            border: none;
+            padding: 0.9rem 2.2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+            padding: 3rem 0;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            margin: 2rem 0;
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: var(--primary-green);
+            display: block;
+        }
+        .stat-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50%       { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .story-section { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 0; }
+            .story-image-wrap img { height: 360px; }
+            .gallery-strip { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 220px; }
+            .gallery-strip .g-tall { grid-row: 1 / 2; }
+            .mosaic-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: 200px 200px; }
+            .services-section, .mosaic-section { padding: 5rem 0; }
+            .cta-section { padding: 4rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display: flex; justify-content: center; align-items: center; padding: 0;">
+            <img src="assets/logo.jpeg" alt="Presso Coffee Cart" style="height: 160px; width: auto; object-fit: contain; mix-blend-mode: multiply;">
+        </div>
+        <nav style="margin-top: 0.5rem; display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-left: 2rem;">
+            <a href="acasa.html" class="nav-link active">Acasă</a>
+            <a href="index.html" class="nav-link">Meniu Cafea</a>
+            <a href="oferta.html" class="nav-link">Cere Ofertă</a>
+        </nav>
+    </header>
+
+    <main class="container main-offset" id="main-content">
+
+        <!-- HERO -->
+        <section class="hero">
+            <span class="hero-eyebrow">Est. 2026 · Timișoara</span>
+            <h1 class="hero-title">
+                Cafeaua bună începe<br><em>conversații bune.</em>
+            </h1>
+            <p class="hero-subtitle">
+                Specialty coffee pentru evenimente care vor să fie ținute minte.
+            </p>
+            <div class="hero-actions">
+                <a href="oferta.html" class="btn" style="padding: 0.9rem 2.2rem; font-size: 1rem; text-decoration: none; display: inline-block;">Cere Ofertă</a>
+                <a href="index.html" class="btn-outline">Vezi Meniul</a>
+            </div>
+            <div class="hero-scroll-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                Descoperă
+            </div>
+        </section>
+
+        <!-- GALLERY STRIP -->
+        <div class="gallery-strip">
+            <img src="assets/1.jpeg" alt="Presso eveniment" class="g-tall">
+            <img src="assets/2.jpeg" alt="Presso cafea">
+            <img src="assets/3.jpeg" alt="Presso bar">
+            <img src="assets/4.jpeg" alt="Presso detalii">
+            <img src="assets/5.jpeg" alt="Presso atmosfera">
+        </div>
+
+
+        <!-- COVERAGE STRIP -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; flex-wrap: wrap; padding: 1.5rem 2rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 14px; margin: 2rem 0; text-align: center;">
+            <div>
+                <p style="font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--text-main); font-weight: 600;">Ne deplasăm în toată țara</p>
+                <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--text-muted); margin-top: 0.2rem;">Localizați în Timișoara · Disponibili oriunde în România</p>
+            </div>
+        </div>
+
+        <!-- STORY -->
+        <section class="story-section">
+            <div class="story-image-wrap">
+                <img src="assets/6.jpeg" alt="Povestea Presso">
+            </div>
+            <div>
+                <p class="section-eyebrow">Povestea noastră</p>
+                <h2 class="section-title">Din pasiune pentru<br>cafea.</h2>
+                <p class="section-body">
+                    Presso s-a născut din plăcerea momentelor simple: cafea de specialitate, conversații care se prelungesc și oameni care se simt bine împreună.
+                    <br><br>
+                    Credem că o cafea bună schimbă atmosfera, așa că aducem la evenimentul tău mai mult decât un coffee cart, este un loc unde lumea se adună natural, stă la povești și revine pentru „încă una”.
+                    <br><br>
+                    <span style="font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--primary-green); display: block; margin-top: 1rem;">
+                        Cafeaua de specialitate face oamenii să mai rămână puțin.
+                    </span>
+                </p>
+            </div>
+        </section>
+
+        <!-- SERVICES -->
+        <section class="services-section">
+            <div class="services-header">
+                <p class="section-eyebrow">Ce oferim</p>
+                <h2 class="section-title">Suntem acolo unde<br>se întâmplă lucrurile</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <span class="service-icon">❖</span>
+                    <h3>Corporate</h3>
+                    <p>Cafea bună pentru oameni care au deja prea multe meetinguri.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">♡</span>
+                    <h3>Nunți</h3>
+                    <p>Locul unde ajung toți invitații. De cele mai multe ori, pentru încă o cafea.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">✧</span>
+                    <h3>Lansări</h3>
+                    <p>Prima impresie contează. Și mirosul de espresso ajută.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">☼</span>
+                    <h3>Aniversări</h3>
+                    <p>Cafea, povești lungi și oameni care nu se grăbesc să plece.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon">✺</span>
+                    <h3>Evenimente speciale</h3>
+                    <p>Orice alt motiv de sărbătoare care merită o cafea pe măsură.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHOTO MOSAIC -->
+        <section class="mosaic-section">
+            <p class="section-eyebrow" style="text-align: center;">Momente Presso</p>
+            <h2 class="section-title" style="text-align: center;">Fiecare eveniment,<br>o poveste</h2>
+            <div class="mosaic-grid">
+                <img src="assets/2.jpeg" alt="Moment 2" class="m-wide">
+                <img src="assets/5.jpeg" alt="Moment 5" class="m-tall">
+                <img src="assets/4.jpeg" alt="Moment 4">
+                <img src="assets/3.jpeg" alt="Moment 3">
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Evenimentul tău merită<br>mai mult decât o cafea obișnuită.</h2>
+            <p>Contactează-ne și primești o ofertă personalizată în mai puțin de 24 de ore.</p>
+            <a href="oferta.html" class="btn-white">Cere Ofertă →</a>
+        </div>
+
+    </main>
+
+    <script>
+        const header = document.querySelector('header');
+        const main = document.getElementById('main-content');
+        function initHeader() {
+            main.style.paddingTop = header.offsetHeight + 'px';
+        }
+        initHeader();
+        window.addEventListener('resize', initHeader);
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const nav = header.querySelector('nav');
+            const maxTranslate = nav ? nav.offsetTop - 16 : header.offsetHeight;
+            header.style.transform = `translateY(-${Math.min(scrollY, maxTranslate)}px)`;
+        });
+    </script>
+
+</body>
+</html>
