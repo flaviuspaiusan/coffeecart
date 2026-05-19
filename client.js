@@ -217,13 +217,6 @@ async function renderActiveOrder() {
         if (activeOrderBanner) activeOrderBanner.style.display = 'flex'
 
         if (myOrder.status === 'completed') {
-            let servedTimeStr = ''
-            const servedAtVal = myOrder.servedAt || myOrder.servedat
-            if (servedAtVal) {
-                const servedDate = new Date(servedAtVal)
-                servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
-            }
-
             activeOrderBanner.className = 'active-order-banner ready'
             activeOrderBanner.innerHTML = `
                 <div class="active-order-header">
@@ -231,9 +224,7 @@ async function renderActiveOrder() {
                     <button class="btn btn-secondary" onclick="clearActiveOrder()" style="padding: 0.4rem 1rem; width: auto;">Închide</button>
                 </div>
                 <div class="active-order-details">Produs: <strong>${myOrder.itemName}</strong> | Nume: ${myOrder.customerName}</div>
-                <div class="queue-count" style="color: #2e7d32; border: 1px solid rgba(46, 125, 50, 0.3);">
-                    ${servedTimeStr ? `Finalizată la ora <strong>${servedTimeStr}</strong>. ` : ''}Te rugăm să o ridici. O zi frumoasă!
-                </div>
+                <div class="queue-count" style="color: #2e7d32; border: 1px solid rgba(46, 125, 50, 0.3);">Te rugăm să o ridici. O zi frumoasă!</div>
             `
         } else {
             const pendingOrders = existingOrders.filter(o => o.status === 'pending')
