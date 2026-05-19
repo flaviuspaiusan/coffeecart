@@ -22,7 +22,7 @@
             <button class="btn" id="tab-orders" onclick="switchTab('orders')" style="flex: 1; min-width: 120px;">Comenzi</button>
             <button class="btn btn-secondary" id="tab-offers" onclick="switchTab('offers')" style="flex: 1; min-width: 120px;">Cereri Oferte</button>
             <button class="btn btn-secondary" id="tab-menu" onclick="switchTab('menu')" style="flex: 1; min-width: 120px;">Gestionare Meniu</button>
-            <button class="btn btn-secondary" id="tab-events" onclick="switchTab('events')" style="flex: 1; min-width: 120px;">Evenimente Pasate</button>
+            <button class="btn btn-secondary" id="tab-events" onclick="switchTab('events')" style="flex: 1; min-width: 120px;">Evenimente Finalizate</button>
         </div>
         <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
             <div>
@@ -35,7 +35,7 @@
         <div id="event-management-card" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; font-family: 'Inter', sans-serif;">
             <h3 style="margin-bottom: 0.5rem; color: var(--primary-brown); font-size: 1.1rem;">Eveniment Curent</h3>
             <div id="no-active-event-view" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                <input type="text" id="new-event-name" placeholder="Numele Evenimentului (ex: Nunta Maria & Ionel)" style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif;">
+                <input type="text" id="new-event-name" placeholder="Numele Evenimentului" style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif;">
                 <button class="btn" onclick="startNewEvent()" style="width: auto; padding: 0.6rem 1.4rem;">Pornește Eveniment</button>
             </div>
             <div id="active-event-view" style="display: none; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
@@ -81,7 +81,7 @@
 
         <div id="section-events" style="display: none;">
             <div class="admin-header">
-                <h2>Evenimente Înregistrate</h2>
+                <h2>Evenimente Finalizate</h2>
             </div>
             
             <div class="orders-list" id="events-list">

@@ -207,13 +207,23 @@ window.viewEventOrders = async function(eventId, eventName) {
                 const date = new Date(order.timestamp)
                 const timeStr = date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
 
+                let servedTimeStr = ''
+                if (order.servedAt) {
+                    const servedDate = new Date(order.servedAt)
+                    servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+                }
+
                 const div = document.createElement('div')
                 div.className = 'order-item completed'
                 div.innerHTML = `
                     <div class="order-info">
                         <h3>#${order.orderNumber || ''} ${order.itemName}</h3>
                         <p><strong>Client:</strong> ${order.customerName}</p>
-                        <div class="order-meta">Ora: ${timeStr} | Status: ${order.status === 'completed' ? 'Servită' : 'În preparare'}</div>
+                        <div class="order-meta">
+                            Plasată la: ${timeStr} 
+                            ${servedTimeStr ? `| Servită la: ${servedTimeStr}` : ''}
+                            | Status: ${order.status === 'completed' ? 'Servită' : 'În preparare'}
+                        </div>
                     </div>
                 `
                 list.appendChild(div)
@@ -271,13 +281,22 @@ function renderOrders(orders) {
         const isCompleted = order.status === 'completed'
         const displayOrderNum = order.orderNumber ? `#${order.orderNumber} ` : ''
 
+        let servedTimeStr = ''
+        if (isCompleted && order.servedAt) {
+            const servedDate = new Date(order.servedAt)
+            servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+        }
+
         const item = document.createElement('div')
         item.className = `order-item ${isCompleted ? 'completed' : ''}`
         item.innerHTML = `
             <div class="order-info">
                 <h3>${displayOrderNum}${order.itemName} <span class="badge ${isCompleted ? 'completed' : ''}">${isCompleted ? 'Finalizată' : 'În preparare'}</span></h3>
                 <p><strong>Client:</strong> ${order.customerName}</p>
-                <div class="order-meta">Plasată la: ${timeStr}</div>
+                <div class="order-meta">
+                    Plasată la: ${timeStr} 
+                    ${isCompleted && servedTimeStr ? `| Servită la: ${servedTimeStr}` : ''}
+                </div>
             </div>
             <div>
                 ${!isCompleted ? `<button class="btn" onclick="markCompleted('${order.id}')" style="width: auto;">Gata de Servire</button>` : ''}
