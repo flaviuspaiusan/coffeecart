@@ -103,40 +103,7 @@
 
     <div class="toast-container" id="toast-container"></div>
 
-    <script>
-        document.getElementById('oferta-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const oferta = {
-                id: 'of_' + Date.now(),
-                nume: document.getElementById('nume').value,
-                email: document.getElementById('email').value,
-                telefon: document.getElementById('telefon').value,
-                companie: document.getElementById('companie').value,
-                locatie: document.getElementById('locatie').value,
-                data: document.getElementById('data-eveniment').value,
-                invitati: document.getElementById('nr-invitati').value,
-                comentarii: document.getElementById('comentarii').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            const oferte = JSON.parse(localStorage.getItem('presso_oferte') || '[]');
-            oferte.push(oferta);
-            localStorage.setItem('presso_oferte', JSON.stringify(oferte));
-            
-            // Show inline success message
-            const successMsg = document.getElementById('success-message');
-            const submitBtn = document.getElementById('submit-btn');
-            successMsg.style.display = 'block';
-            submitBtn.style.display = 'none';
-            setTimeout(() => {
-                successMsg.style.display = 'none';
-                submitBtn.style.display = 'block';
-            }, 5000);
-            
-            this.reset();
-        });
-    </script>
+    <script type="module" src="oferta.js"></script>
     <script>
         const header = document.querySelector('header');
         const main = document.getElementById('main-content');
