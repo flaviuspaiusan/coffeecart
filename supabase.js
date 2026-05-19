@@ -37,12 +37,20 @@ export const SupabaseService = {
         return data
     },
 
-    async clearOrders() {
-        const { error } = await supabase
-            .from('orders')
-            .delete()
-            .neq('id', '0')
-        if (error) throw error
+    async clearOrders(activeEventId) {
+        if (activeEventId) {
+            const { error } = await supabase
+                .from('orders')
+                .delete()
+                .or(`eventId.eq.${activeEventId},eventId.is.null`)
+            if (error) throw error
+        } else {
+            const { error } = await supabase
+                .from('orders')
+                .delete()
+                .is('eventId', null)
+            if (error) throw error
+        }
     },
 
     async getOrdersByEvent(eventId) {

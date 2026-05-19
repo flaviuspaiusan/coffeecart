@@ -345,13 +345,18 @@ window.markCompleted = async function(orderId) {
 }
 
 window.clearOrders = async function() {
-    if (confirm('Ești sigur că vrei să ștergi toate comenzile din istoric?')) {
-        try {
-            await SupabaseService.clearOrders()
+    try {
+        const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
+        const confirmMsg = activeEventId 
+            ? 'Ești sigur că vrei să ștergi comenzile din acest eveniment activ? Istoricul evenimentelor finalizate va fi păstrat.' 
+            : 'Ești sigur că vrei să ștergi toate comenzile din afara evenimentelor?';
+            
+        if (confirm(confirmMsg)) {
+            await SupabaseService.clearOrders(activeEventId)
             await loadOrders()
-        } catch (err) {
-            console.error('Error clearing orders:', err)
         }
+    } catch (err) {
+        console.error('Error clearing orders:', err)
     }
 }
 
