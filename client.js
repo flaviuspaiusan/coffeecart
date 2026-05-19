@@ -218,8 +218,9 @@ async function renderActiveOrder() {
 
         if (myOrder.status === 'completed') {
             let servedTimeStr = ''
-            if (myOrder.servedAt) {
-                const servedDate = new Date(myOrder.servedAt)
+            const servedAtVal = myOrder.servedAt || myOrder.servedat
+            if (servedAtVal) {
+                const servedDate = new Date(servedAtVal)
                 servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
             }
 

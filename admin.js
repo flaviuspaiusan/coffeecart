@@ -208,8 +208,9 @@ window.viewEventOrders = async function(eventId, eventName) {
                 const timeStr = date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
 
                 let servedTimeStr = ''
-                if (order.servedAt) {
-                    const servedDate = new Date(order.servedAt)
+                const servedAtVal = order.servedAt || order.servedat
+                if (servedAtVal) {
+                    const servedDate = new Date(servedAtVal)
                     servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
                 }
 
@@ -282,8 +283,9 @@ function renderOrders(orders) {
         const displayOrderNum = order.orderNumber ? `#${order.orderNumber} ` : ''
 
         let servedTimeStr = ''
-        if (isCompleted && order.servedAt) {
-            const servedDate = new Date(order.servedAt)
+        const servedAtVal = order.servedAt || order.servedat
+        if (isCompleted && servedAtVal) {
+            const servedDate = new Date(servedAtVal)
             servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
         }
 
