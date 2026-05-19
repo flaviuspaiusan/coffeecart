@@ -19,15 +19,31 @@
 
     <main class="container">
         <div class="admin-sections" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
-            <button class="btn" id="tab-orders" onclick="switchTab('orders')" style="flex: 1; min-width: 150px;">Comenzi</button>
-            <button class="btn btn-secondary" id="tab-offers" onclick="switchTab('offers')" style="flex: 1; min-width: 150px;">Cereri Oferte</button>
-            <button class="btn btn-secondary" id="tab-menu" onclick="switchTab('menu')" style="flex: 1; min-width: 150px;">Gestionare Meniu</button>
+            <button class="btn" id="tab-orders" onclick="switchTab('orders')" style="flex: 1; min-width: 120px;">Comenzi</button>
+            <button class="btn btn-secondary" id="tab-offers" onclick="switchTab('offers')" style="flex: 1; min-width: 120px;">Cereri Oferte</button>
+            <button class="btn btn-secondary" id="tab-menu" onclick="switchTab('menu')" style="flex: 1; min-width: 120px;">Gestionare Meniu</button>
+            <button class="btn btn-secondary" id="tab-events" onclick="switchTab('events')" style="flex: 1; min-width: 120px;">Evenimente Pasate</button>
         </div>
         <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px;">
             <div>
                 <p style="font-size: 1.25rem; font-weight: 700; font-family: 'Inter', sans-serif;" id="ordering-status-text">Comenzi Active</p>
             </div>
             <button id="ordering-toggle-btn" onclick="toggleOrdering()" style="margin-left: auto; padding: 0.6rem 1.4rem; border-radius: 8px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; border: none; font-size: 0.95rem;">Se încarcă...</button>
+        </div>
+
+        <!-- Event Management -->
+        <div id="event-management-card" style="margin-bottom: 1.5rem; padding: 1rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; font-family: 'Inter', sans-serif;">
+            <h3 style="margin-bottom: 0.5rem; color: var(--primary-brown); font-size: 1.1rem;">Eveniment Curent</h3>
+            <div id="no-active-event-view" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="new-event-name" placeholder="Numele Evenimentului (ex: Nunta Maria & Ionel)" style="flex: 1; padding: 0.6rem 1rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif;">
+                <button class="btn" onclick="startNewEvent()" style="width: auto; padding: 0.6rem 1.4rem;">Pornește Eveniment</button>
+            </div>
+            <div id="active-event-view" style="display: none; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span style="font-size: 1.05rem;">Eveniment activ: <strong id="active-event-name-display" style="color: var(--primary-green);">-</strong></span>
+                </div>
+                <button class="btn" onclick="stopActiveEvent()" style="width: auto; background: #e53e3e; color: white;">Încheie Eveniment</button>
+            </div>
         </div>
 
         <div id="section-orders">
@@ -63,6 +79,16 @@
             </div>
         </div>
 
+        <div id="section-events" style="display: none;">
+            <div class="admin-header">
+                <h2>Evenimente Înregistrate</h2>
+            </div>
+            
+            <div class="orders-list" id="events-list">
+                <!-- Events list injected here -->
+            </div>
+        </div>
+
         <!-- Menu Modal -->
         <div class="modal-overlay" id="menu-modal">
             <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
@@ -95,6 +121,19 @@
                         <button type="submit" class="btn">Salvează Produs</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Event Details Modal -->
+        <div class="modal-overlay" id="event-details-modal">
+            <div class="modal-content" style="max-height: 90vh; overflow-y: auto; max-width: 600px;">
+                <h2 id="event-details-title" style="margin-bottom: 1rem;">Comenzi Eveniment</h2>
+                <div class="orders-list" id="event-orders-list">
+                    <!-- Event orders injected here -->
+                </div>
+                <div class="modal-actions" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEventDetailsModal()">Închide</button>
+                </div>
             </div>
         </div>
     </main>

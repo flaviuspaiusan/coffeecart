@@ -19,6 +19,7 @@ const defaultMenuItems = [
 ]
 
 let currentMenuAdmin = []
+let activeEvent = null
 
 async function initAdmin() {
     try {
@@ -26,10 +27,14 @@ async function initAdmin() {
         await loadOffers()
         await loadMenu()
         await updateOrderingUI()
+        await loadActiveEvent()
 
         SupabaseService.subscribeToOrders(() => loadOrders())
         SupabaseService.subscribeToMenu(() => loadMenu())
-        SupabaseService.subscribeToSettings(() => updateOrderingUI())
+        SupabaseService.subscribeToSettings(() => {
+            updateOrderingUI()
+            loadActiveEvent()
+        })
     } catch (err) {
         console.error('Admin initialization error:', err)
     }
@@ -75,14 +80,177 @@ window.toggleOrdering = async function() {
     }
 }
 
+// ── EVENT MANAGEMENT ──
+async function loadActiveEvent() {
+    try {
+        const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
+        const noActiveView = document.getElementById('no-active-event-view')
+        const activeView = document.getElementById('active-event-view')
+        const nameDisplay = document.getElementById('active-event-name-display')
+
+        if (activeEventId) {
+            const events = await SupabaseService.getEvents()
+            activeEvent = events.find(e => e.id === activeEventId)
+            if (activeEvent) {
+                nameDisplay.textContent = activeEvent.name
+                noActiveView.style.display = 'none'
+                activeView.style.display = 'flex'
+                return
+            }
+        }
+
+        activeEvent = null
+        noActiveView.style.display = 'flex'
+        activeView.style.display = 'none'
+    } catch (err) {
+        console.error('Error loading active event:', err)
+    }
+}
+
+window.startNewEvent = async function() {
+    const nameInput = document.getElementById('new-event-name')
+    const name = nameInput.value.trim()
+    if (!name) {
+        alert('Te rugăm să introduci un nume pentru eveniment!')
+        return
+    }
+
+    try {
+        const eventId = 'evt_' + Date.now()
+        const event = {
+            id: eventId,
+            name: name,
+            timestamp: new Date().toISOString(),
+            status: 'active'
+        }
+
+        await SupabaseService.createEvent(event)
+        await SupabaseService.setSetting('presso_active_event_id', eventId)
+        nameInput.value = ''
+        await loadActiveEvent()
+        alert(`Evenimentul "${name}" a pornit! Toate comenzile noi vor fi asociate cu acesta.`)
+    } catch (err) {
+        console.error('Error starting new event:', err)
+        alert('Eroare la pornirea evenimentului.')
+    }
+}
+
+window.stopActiveEvent = async function() {
+    if (!activeEvent) return
+    if (confirm(`Sigur vrei să încheie evenimentul "${activeEvent.name}"?`)) {
+        try {
+            await SupabaseService.updateEventStatus(activeEvent.id, 'completed')
+            await SupabaseService.setSetting('presso_active_event_id', '')
+            await loadActiveEvent()
+            alert('Eveniment încheiat cu succes!')
+        } catch (err) {
+            console.error('Error stopping event:', err)
+            alert('Eroare la finalizarea evenimentului.')
+        }
+    }
+}
+
+async function loadEvents() {
+    try {
+        const events = await SupabaseService.getEvents()
+        renderEvents(events)
+    } catch (err) {
+        console.error('Error loading events:', err)
+    }
+}
+
+function renderEvents(events) {
+    const list = document.getElementById('events-list')
+    if (!list) return
+    list.innerHTML = ''
+
+    if (events.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Nu există evenimente înregistrate.</p>'
+        return
+    }
+
+    events.forEach(evt => {
+        const date = new Date(evt.timestamp)
+        const dateStr = date.toLocaleDateString('ro-RO') + ' ' + date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+        const isActive = evt.status === 'active'
+
+        const item = document.createElement('div')
+        item.className = 'order-item'
+        if (isActive) item.style.borderLeftColor = 'var(--primary-green)'
+
+        item.innerHTML = `
+            <div class="order-info" style="width: 100%;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h3>${evt.name} ${isActive ? '<span class="badge" style="background: rgba(46, 125, 50, 0.1); color: var(--primary-green);">Activ</span>' : '<span class="badge" style="background: rgba(120, 120, 120, 0.1); color: #787878;">Finalizat</span>'}</h3>
+                    <button class="btn" onclick="viewEventOrders('${evt.id}', '${evt.name.replace(/'/g, "\\'")}')" style="width: auto; padding: 0.4rem 1rem; font-size: 0.9rem;">Vezi Comenzi</button>
+                </div>
+                <div class="order-meta">Creat la: ${dateStr}</div>
+            </div>
+        `
+        list.appendChild(item)
+    })
+}
+
+window.viewEventOrders = async function(eventId, eventName) {
+    try {
+        const orders = await SupabaseService.getOrdersByEvent(eventId)
+        const list = document.getElementById('event-orders-list')
+        const title = document.getElementById('event-details-title')
+
+        title.textContent = `Comenzi - ${eventName}`
+        list.innerHTML = ''
+
+        if (orders.length === 0) {
+            list.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Nu s-a înregistrat nicio comandă în acest eveniment.</p>'
+        } else {
+            orders.forEach(order => {
+                const date = new Date(order.timestamp)
+                const timeStr = date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+
+                const div = document.createElement('div')
+                div.className = 'order-item completed'
+                div.innerHTML = `
+                    <div class="order-info">
+                        <h3>#${order.orderNumber || ''} ${order.itemName}</h3>
+                        <p><strong>Client:</strong> ${order.customerName}</p>
+                        <div class="order-meta">Ora: ${timeStr} | Status: ${order.status === 'completed' ? 'Servită' : 'În preparare'}</div>
+                    </div>
+                `
+                list.appendChild(div)
+            })
+        }
+
+        document.getElementById('event-details-modal').classList.add('active')
+    } catch (err) {
+        console.error('Error fetching event orders:', err)
+        alert('Eroare la preluarea comenzilor evenimentului.')
+    }
+}
+
+window.closeEventDetailsModal = function() {
+    document.getElementById('event-details-modal').classList.remove('active')
+}
+
+// ── ORDERS LIST ──
 async function loadOrders() {
     try {
         const orders = await SupabaseService.getOrders()
-        orders.sort((a, b) => {
+        // Default orders list shows only active event orders or unassociated orders
+        // Filter orders based on active event to make active queue clean
+        const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
+        
+        const filteredOrders = orders.filter(o => {
+            if (activeEventId) {
+                return o.eventId === activeEventId
+            }
+            return !o.eventId // If no active event, show orders that don't belong to any event
+        })
+
+        filteredOrders.sort((a, b) => {
             if (a.status === b.status) return new Date(b.timestamp) - new Date(a.timestamp)
             return a.status === 'pending' ? -1 : 1
         })
-        renderOrders(orders)
+        renderOrders(filteredOrders)
     } catch (err) {
         console.error('Error loading orders:', err)
     }
@@ -93,7 +261,7 @@ function renderOrders(orders) {
     ordersList.innerHTML = ''
 
     if (orders.length === 0) {
-        ordersList.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Nu există comenzi momentan.</p>'
+        ordersList.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">Nu există comenzi active momentan.</p>'
         return
     }
 
@@ -183,14 +351,17 @@ window.switchTab = function(tabId) {
     document.getElementById('section-orders').style.display = tabId === 'orders' ? 'block' : 'none'
     document.getElementById('section-menu').style.display = tabId === 'menu' ? 'block' : 'none'
     document.getElementById('section-offers').style.display = tabId === 'offers' ? 'block' : 'none'
+    document.getElementById('section-events').style.display = tabId === 'events' ? 'block' : 'none'
 
     document.getElementById('tab-orders').className = tabId === 'orders' ? 'btn' : 'btn btn-secondary'
     document.getElementById('tab-menu').className = tabId === 'menu' ? 'btn' : 'btn btn-secondary'
     document.getElementById('tab-offers').className = tabId === 'offers' ? 'btn' : 'btn btn-secondary'
+    document.getElementById('tab-events').className = tabId === 'events' ? 'btn' : 'btn btn-secondary'
 
     if (tabId === 'menu') loadMenu()
     else if (tabId === 'offers') loadOffers()
     else if (tabId === 'orders') loadOrders()
+    else if (tabId === 'events') loadEvents()
 }
 
 window.openMenuModal = function() {
@@ -316,7 +487,7 @@ function renderOffers(offers) {
                     <p><strong>Data Eveniment:</strong> ${oferta.data}</p>
                     <p><strong>Nr. Invitați:</strong> ${oferta.invitati} pers.</p>
                 </div>
-                ${oferta.comentarii ? `<div style="margin-top: 1rem; padding: 0.8rem; background: rgba(93,64,55,0.03); border-radius: 8px; border: 1px solid var(--glass-border);"><strong>Comentarii:</strong><br><span style="white-space: pre-wrap;">${oferta.comentarii}</span></div>` : ''}
+                ${oferta.comentarii ? `<div style="margin-top: 1rem; padding: 0.8rem; background: rgba(93,64,55,0.03); border-radius: 8px; border: 1px solid var(--glass-border); border-radius: 12px;"><strong>Comentarii:</strong><br><span style="white-space: pre-wrap;">${oferta.comentarii}</span></div>` : ''}
                 <div class="order-meta" style="margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 0.5rem;">Trimisă la: ${dateStr}</div>
             </div>
         `

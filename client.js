@@ -56,6 +56,14 @@ async function loadSettings() {
     try {
         const orderingStatus = await SupabaseService.getSetting('presso_ordering')
         localStorage.setItem('presso_ordering', orderingStatus || 'enabled')
+
+        const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
+        if (activeEventId) {
+            localStorage.setItem('presso_active_event_id', activeEventId)
+        } else {
+            localStorage.removeItem('presso_active_event_id')
+        }
+
         renderMenu()
     } catch (err) {
         console.error('Error loading settings:', err)
@@ -163,6 +171,7 @@ checkoutForm.addEventListener('submit', async (e) => {
     try {
         const existingOrders = await SupabaseService.getOrders()
         const orderNumber = existingOrders.length > 0 ? Math.max(...existingOrders.map(o => o.orderNumber || 0)) + 1 : 1
+        const activeEventId = localStorage.getItem('presso_active_event_id')
 
         const order = {
             id: 'ord_' + Date.now(),
@@ -170,7 +179,8 @@ checkoutForm.addEventListener('submit', async (e) => {
             itemName: finalItemName,
             customerName,
             timestamp: new Date().toISOString(),
-            status: 'pending'
+            status: 'pending',
+            eventId: activeEventId || null
         }
 
         await SupabaseService.createOrder(order)

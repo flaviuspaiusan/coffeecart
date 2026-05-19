@@ -41,6 +41,43 @@ export const SupabaseService = {
         if (error) throw error
     },
 
+    async getOrdersByEvent(eventId) {
+        const { data, error } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('eventId', eventId)
+            .order('timestamp', { ascending: true })
+        if (error) throw error
+        return data
+    },
+
+    // Events
+    async getEvents() {
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .order('timestamp', { ascending: false })
+        if (error) throw error
+        return data
+    },
+
+    async createEvent(event) {
+        const { data, error } = await supabase
+            .from('events')
+            .insert([event])
+        if (error) throw error
+        return data
+    },
+
+    async updateEventStatus(eventId, status) {
+        const { data, error } = await supabase
+            .from('events')
+            .update({ status })
+            .eq('id', eventId)
+        if (error) throw error
+        return data
+    },
+
     // Menu
     async getMenuItems() {
         const { data, error } = await supabase
