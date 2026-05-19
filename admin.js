@@ -182,13 +182,40 @@ function renderEvents(events) {
             <div class="order-info" style="width: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                     <h3>${evt.name} ${isActive ? '<span class="badge" style="background: rgba(46, 125, 50, 0.1); color: var(--primary-green);">Activ</span>' : '<span class="badge" style="background: rgba(120, 120, 120, 0.1); color: #787878;">Finalizat</span>'}</h3>
-                    <button class="btn" onclick="viewEventOrders('${evt.id}', '${evt.name.replace(/'/g, "\\'")}')" style="width: auto; padding: 0.4rem 1rem; font-size: 0.9rem;">Vezi Comenzi</button>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn" onclick="viewEventOrders('${evt.id}', '${evt.name.replace(/'/g, "\\'")}')" style="width: auto; padding: 0.4rem 1rem; font-size: 0.9rem;">Vezi Comenzi</button>
+                        ${!isActive ? `<button class="btn btn-secondary" onclick="deleteEvent('${evt.id}')" style="width: auto; padding: 0.4rem 1rem; font-size: 0.9rem; background: #e53e3e; color: white;">Șterge</button>` : ''}
+                    </div>
                 </div>
                 <div class="order-meta">Creat la: ${dateStr}</div>
             </div>
         `
         list.appendChild(item)
     })
+}
+
+window.deleteEvent = async function(eventId) {
+    if (confirm('Sigur vrei să ștergi acest eveniment și toate comenzile lui? Această acțiune este permanentă.')) {
+        try {
+            await SupabaseService.deleteEvent(eventId)
+            await loadEvents()
+        } catch (err) {
+            console.error('Error deleting event:', err)
+            alert('Eroare la ștergerea evenimentului.')
+        }
+    }
+}
+
+window.clearCompletedEvents = async function() {
+    if (confirm('Sigur vrei să ștergi TOATE evenimentele finalizate și comenzile asociate lor? Această acțiune este permanentă.')) {
+        try {
+            await SupabaseService.clearCompletedEvents()
+            await loadEvents()
+        } catch (err) {
+            console.error('Error clearing completed events:', err)
+            alert('Eroare la ștergerea tuturor evenimentelor.')
+        }
+    }
 }
 
 window.viewEventOrders = async function(eventId, eventName) {

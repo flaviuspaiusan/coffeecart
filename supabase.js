@@ -82,6 +82,44 @@ export const SupabaseService = {
         return data
     },
 
+    async deleteEvent(eventId) {
+        const { error: errorOrders } = await supabase
+            .from('orders')
+            .delete()
+            .eq('eventId', eventId)
+        if (errorOrders) throw errorOrders
+
+        const { error: errorEvent } = await supabase
+            .from('events')
+            .delete()
+            .eq('id', eventId)
+        if (errorEvent) throw errorEvent
+    },
+
+    async clearCompletedEvents() {
+        const { data: completedEvents, error: fetchErr } = await supabase
+            .from('events')
+            .select('id')
+            .eq('status', 'completed')
+        if (fetchErr) throw fetchErr
+
+        if (completedEvents && completedEvents.length > 0) {
+            const ids = completedEvents.map(e => e.id)
+
+            const { error: errorOrders } = await supabase
+                .from('orders')
+                .delete()
+                .in('eventId', ids)
+            if (errorOrders) throw errorOrders
+
+            const { error: errorEvents } = await supabase
+                .from('events')
+                .delete()
+                .in('id', ids)
+            if (errorEvents) throw errorEvents
+        }
+    },
+
     // Menu
     async getMenuItems() {
         const { data, error } = await supabase
