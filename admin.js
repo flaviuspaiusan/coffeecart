@@ -195,7 +195,7 @@ function renderEvents(events) {
 }
 
 window.deleteEvent = async function(eventId) {
-    if (confirm('Sigur vrei să ștergi acest eveniment și toate comenzile lui? Această acțiune este permanentă.')) {
+    if (confirm('Sigur vrei să ștergi acest eveniment? Această acțiune va șterge doar evenimentul din istoric, dar comenzile lui vor rămâne salvate în baza de date.')) {
         try {
             await SupabaseService.deleteEvent(eventId)
             await loadEvents()
@@ -207,7 +207,7 @@ window.deleteEvent = async function(eventId) {
 }
 
 window.clearCompletedEvents = async function() {
-    if (confirm('Sigur vrei să ștergi TOATE evenimentele finalizate și comenzile asociate lor? Această acțiune este permanentă.')) {
+    if (confirm('Sigur vrei să ștergi TOATE evenimentele finalizate? Această acțiune va șterge doar evenimentele din istoric, dar toate comenzile lor vor rămâne salvate în baza de date.')) {
         try {
             await SupabaseService.clearCompletedEvents()
             await loadEvents()

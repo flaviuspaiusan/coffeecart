@@ -83,12 +83,6 @@ export const SupabaseService = {
     },
 
     async deleteEvent(eventId) {
-        const { error: errorOrders } = await supabase
-            .from('orders')
-            .delete()
-            .eq('eventId', eventId)
-        if (errorOrders) throw errorOrders
-
         const { error: errorEvent } = await supabase
             .from('events')
             .delete()
@@ -97,27 +91,11 @@ export const SupabaseService = {
     },
 
     async clearCompletedEvents() {
-        const { data: completedEvents, error: fetchErr } = await supabase
+        const { error: errorEvents } = await supabase
             .from('events')
-            .select('id')
+            .delete()
             .eq('status', 'completed')
-        if (fetchErr) throw fetchErr
-
-        if (completedEvents && completedEvents.length > 0) {
-            const ids = completedEvents.map(e => e.id)
-
-            const { error: errorOrders } = await supabase
-                .from('orders')
-                .delete()
-                .in('eventId', ids)
-            if (errorOrders) throw errorOrders
-
-            const { error: errorEvents } = await supabase
-                .from('events')
-                .delete()
-                .in('id', ids)
-            if (errorEvents) throw errorEvents
-        }
+        if (errorEvents) throw errorEvents
     },
 
     // Menu
