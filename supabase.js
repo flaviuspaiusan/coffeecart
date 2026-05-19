@@ -25,9 +25,13 @@ export const SupabaseService = {
     },
 
     async updateOrderStatus(orderId, status) {
+        const updateData = { status }
+        if (status === 'completed') {
+            updateData.servedAt = new Date().toISOString()
+        }
         const { data, error } = await supabase
             .from('orders')
-            .update({ status })
+            .update(updateData)
             .eq('id', orderId)
         if (error) throw error
         return data
