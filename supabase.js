@@ -171,15 +171,18 @@ export const SupabaseService = {
             .from('settings')
             .select('value')
             .eq('key', key)
-            .single()
-        if (error && error.code !== 'PGRST116') throw error
-        return data ? data.value : null
+            .order('id', { ascending: false })
+            .limit(1)
+        if (error) throw error
+        return data && data.length > 0 ? data[0].value : null
     },
 
     async setSetting(key, value) {
+        // Delete existing rows first to prevent duplicates, then insert fresh
+        await supabase.from('settings').delete().eq('key', key)
         const { data, error } = await supabase
             .from('settings')
-            .upsert([{ key, value }])
+            .insert([{ key, value }])
         if (error) throw error
         return data
     },
