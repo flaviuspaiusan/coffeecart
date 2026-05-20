@@ -203,12 +203,13 @@ function getItemPrice(item) {
     if (id === 'americano' || name === 'americano') return `${p('americano') || '10'} lei`
     if (id.includes('cappuccino') || name.includes('cappuccino') || id.includes('cappucino') || name.includes('cappucino')) return `${p('cappuccino') || '13'} lei`
     if (id.includes('flat') || name.includes('flat')) return `${p('flat_white') || '14'} lei`
-    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !id.includes('pistachio') && !id.includes('tiramisu'))) return `${p('latte_macchiato') || '14'} lei`
-    if (id.includes('iced_coffee') || name.includes('iced coffee') || id.includes('iced coffeee') || name.includes('iced coffeee')) return `${p('iced_coffee') || '15'} lei`
+    // ⚠️ pistachio & tiramisu BEFORE latte and iced_coffee (names overlap!)
     if (id.includes('pistachio') || name.includes('pistachio')) return `${p('pistachio_latte') || '17'} lei`
     if (id.includes('tiramisu') || name.includes('tiramisu')) return `${p('tiramisu_latte') || '17'} lei`
     if (id.includes('cold_brew_tonic') || name.includes('cold brew tonic')) return `${p('cold_brew_tonic') || '16'} lei`
     if (id.includes('tropical') || name.includes('tropical')) return `${p('tropical_cold_brew') || '16'} lei`
+    if (id.includes('iced_coffee') || name.includes('iced coffee') || id.includes('iced coffeee') || name.includes('iced coffeee')) return `${p('iced_coffee') || '15'} lei`
+    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !id.includes('pistachio') && !id.includes('tiramisu'))) return `${p('latte_macchiato') || '14'} lei`
     return ''
 }
 
