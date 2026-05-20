@@ -285,8 +285,18 @@ async function loadOrders() {
         })
 
         filteredOrders.sort((a, b) => {
-            if (a.status === b.status) return new Date(b.timestamp) - new Date(a.timestamp)
-            return a.status === 'pending' ? -1 : 1
+            if (a.status !== b.status) {
+                return a.status === 'pending' ? -1 : 1
+            }
+            if (a.status === 'pending') {
+                // For pending orders: oldest first (ascending order) so they don't get missed/delayed
+                return new Date(a.timestamp) - new Date(b.timestamp)
+            } else {
+                // For completed orders: newest first (descending order) by served time
+                const timeA = a.servedAt || a.servedat || a.timestamp
+                const timeB = b.servedAt || b.servedat || b.timestamp
+                return new Date(timeB) - new Date(timeA)
+            }
         })
         renderOrders(filteredOrders)
     } catch (err) {
