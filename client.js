@@ -26,6 +26,7 @@ const activeOrderBanner = document.getElementById('active-order-banner')
 
 async function init() {
     try {
+        propagateScanParam()
         await loadMenu()
         await loadSettings()
         renderActiveOrder()
@@ -35,6 +36,20 @@ async function init() {
         SupabaseService.subscribeToSettings(() => loadSettings())
     } catch (err) {
         console.error('Initialization error:', err)
+    }
+}
+
+function propagateScanParam() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const scan = urlParams.get('scan');
+    if (scan) {
+        document.querySelectorAll('a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('tel') && !href.startsWith('#')) {
+                const separator = href.includes('?') ? '&' : '?';
+                link.setAttribute('href', href + separator + 'scan=' + scan);
+            }
+        });
     }
 }
 
@@ -57,12 +72,6 @@ async function loadSettings() {
         const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
         if (activeEventId) {
             localStorage.setItem('presso_active_event_id', activeEventId)
-            
-            // If they scanned the QR code for the active event, save the association
-            const urlParams = new URLSearchParams(window.location.search)
-            if (urlParams.get('scan') === 'presso2026') {
-                localStorage.setItem('presso_scanned_event_id', activeEventId)
-            }
         } else {
             localStorage.removeItem('presso_active_event_id')
         }
@@ -77,10 +86,8 @@ function renderMenu() {
     if (!menuGrid) return
     menuGrid.innerHTML = ''
     const items = [...currentMenu]
-    const activeEventId = localStorage.getItem('presso_active_event_id')
-    const scannedEventId = localStorage.getItem('presso_scanned_event_id')
-    const hasActiveEvent = !!activeEventId
-    const hasScanAccess = hasActiveEvent && activeEventId === scannedEventId
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasScanAccess = window.location.search.includes('scan=presso2026')
 
     // Control the visibility of the unauthorized banner
     const unauthorizedBanner = document.getElementById('unauthorized-banner')
@@ -152,10 +159,8 @@ function renderMenu() {
 }
 
 window.openModal = function(itemId) {
-    const activeEventId = localStorage.getItem('presso_active_event_id')
-    const scannedEventId = localStorage.getItem('presso_scanned_event_id')
-    const hasActiveEvent = !!activeEventId
-    const hasScanAccess = hasActiveEvent && activeEventId === scannedEventId
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasScanAccess = window.location.search.includes('scan=presso2026')
     
     if (!hasScanAccess || !hasActiveEvent) {
         return // Block modal access for unauthorized/inactive states
@@ -219,10 +224,8 @@ function showToast(message) {
 checkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault()
 
-    const activeEventId = localStorage.getItem('presso_active_event_id')
-    const scannedEventId = localStorage.getItem('presso_scanned_event_id')
-    const hasActiveEvent = !!activeEventId
-    const hasScanAccess = hasActiveEvent && activeEventId === scannedEventId
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasScanAccess = window.location.search.includes('scan=presso2026')
     
     if (!hasScanAccess || !hasActiveEvent) {
         alert('Comenzile nu sunt disponibile pentru tine momentan.')
@@ -272,10 +275,8 @@ checkoutForm.addEventListener('submit', async (e) => {
 btnCancel.addEventListener('click', closeModal)
 
 async function renderActiveOrder() {
-    const activeEventId = localStorage.getItem('presso_active_event_id')
-    const scannedEventId = localStorage.getItem('presso_scanned_event_id')
-    const hasActiveEvent = !!activeEventId
-    const hasScanAccess = hasActiveEvent && activeEventId === scannedEventId
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasScanAccess = window.location.search.includes('scan=presso2026')
 
     if (!hasScanAccess) {
         if (activeOrderBanner) activeOrderBanner.style.display = 'none'

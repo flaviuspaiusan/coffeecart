@@ -121,6 +121,19 @@
             const maxTranslate = nav ? nav.offsetTop - 16 : header.offsetHeight;
             header.style.transform = `translateY(-${Math.min(scrollY, maxTranslate)}px)`;
         });
+
+        // Propagate query parameter (e.g. scan=presso2026) to all links
+        const urlParams = new URLSearchParams(window.location.search);
+        const scan = urlParams.get('scan');
+        if (scan) {
+            document.querySelectorAll('a').forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('http') && !href.startsWith('mailto') && !href.startsWith('tel') && !href.startsWith('#')) {
+                    const separator = href.includes('?') ? '&' : '?';
+                    link.setAttribute('href', href + separator + 'scan=' + scan);
+                }
+            });
+        }
     </script>
 </body>
 </html>
