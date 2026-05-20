@@ -578,8 +578,10 @@ window.openPricesModal = async function() {
     let savedPrices = {}
     try {
         const raw = await SupabaseService.getSetting('presso_prices')
-        if (raw) savedPrices = JSON.parse(raw)
-    } catch (e) { /* use defaults */ }
+        if (raw) {
+            savedPrices = typeof raw === 'string' ? JSON.parse(raw) : raw
+        }
+    } catch (e) { console.warn('Could not load saved prices:', e) }
 
     body.innerHTML = ''
     DEFAULT_PRICES.forEach(item => {
