@@ -59,9 +59,6 @@ async function loadMenu() {
 
 async function loadSettings() {
     try {
-        const orderingStatus = await SupabaseService.getSetting('presso_ordering')
-        localStorage.setItem('presso_ordering', orderingStatus || 'enabled')
-
         const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
         if (activeEventId) {
             localStorage.setItem('presso_active_event_id', activeEventId)
@@ -79,33 +76,35 @@ function renderMenu() {
     if (!menuGrid) return
     menuGrid.innerHTML = ''
     const items = [...currentMenu]
-    const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
     const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
     const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
 
     // Control the visibility of the unauthorized banner
     const unauthorizedBanner = document.getElementById('unauthorized-banner')
     if (unauthorizedBanner) {
-        if (!orderingEnabled || !hasActiveEvent) {
-            unauthorizedBanner.style.display = 'block'
-            unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Comenzi închise ☕'
-            unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Momentan nu se pot plasa comenzi. Ne vedem la următorul eveniment!'
-            unauthorizedBanner.style.borderColor = '#e53e3e'
-            unauthorizedBanner.style.background = 'rgba(229, 62, 62, 0.05)'
-            unauthorizedBanner.querySelector('p:first-child').style.color = '#e53e3e'
-        } else if (!hasScanAccess) {
+        if (!hasScanAccess) {
+            // Direct visitors - always show view-only scan message
             unauthorizedBanner.style.display = 'block'
             unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Meniu în mod vizualizare 👁️'
             unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!'
             unauthorizedBanner.style.borderColor = 'var(--primary-green)'
             unauthorizedBanner.style.background = 'rgba(93, 122, 78, 0.05)'
             unauthorizedBanner.querySelector('p:first-child').style.color = 'var(--primary-green)'
+        } else if (!hasActiveEvent) {
+            // QR visitors, but no active event running
+            unauthorizedBanner.style.display = 'block'
+            unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Comenzi închise ☕'
+            unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Momentan nu se pot plasa comenzi. Ne vedem la următorul eveniment!'
+            unauthorizedBanner.style.borderColor = '#e53e3e'
+            unauthorizedBanner.style.background = 'rgba(229, 62, 62, 0.05)'
+            unauthorizedBanner.querySelector('p:first-child').style.color = '#e53e3e'
         } else {
+            // QR visitors AND active event -> can order!
             unauthorizedBanner.style.display = 'none'
         }
     }
 
-    const canOrder = orderingEnabled && hasActiveEvent && hasScanAccess
+    const canOrder = hasActiveEvent && hasScanAccess
 
     const getSortValue = (item) => {
         if (!item) return 99
@@ -150,11 +149,10 @@ function renderMenu() {
 }
 
 window.openModal = function(itemId) {
-    const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
     const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
     const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
     
-    if (!orderingEnabled || !hasScanAccess || !hasActiveEvent) {
+    if (!hasScanAccess || !hasActiveEvent) {
         return // Block modal access for unauthorized/inactive states
     }
 
@@ -216,11 +214,10 @@ function showToast(message) {
 checkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault()
 
-    const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
     const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
     const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
     
-    if (!orderingEnabled || !hasScanAccess || !hasActiveEvent) {
+    if (!hasScanAccess || !hasActiveEvent) {
         alert('Comenzile nu sunt disponibile pentru tine momentan.')
         return
     }

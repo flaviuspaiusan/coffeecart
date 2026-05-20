@@ -26,57 +26,15 @@ async function initAdmin() {
         await loadOrders()
         await loadOffers()
         await loadMenu()
-        await updateOrderingUI()
         await loadActiveEvent()
 
         SupabaseService.subscribeToOrders(() => loadOrders())
         SupabaseService.subscribeToMenu(() => loadMenu())
         SupabaseService.subscribeToSettings(() => {
-            updateOrderingUI()
             loadActiveEvent()
         })
     } catch (err) {
         console.error('Admin initialization error:', err)
-    }
-}
-
-// ── ORDERING TOGGLE ──
-async function updateOrderingUI() {
-    try {
-        const status = await SupabaseService.getSetting('presso_ordering') || 'enabled'
-        localStorage.setItem('presso_ordering', status)
-
-        const enabled = status !== 'disabled'
-        const btn = document.getElementById('ordering-toggle-btn')
-        const txt = document.getElementById('ordering-status-text')
-        if (!btn || !txt) return
-
-        if (enabled) {
-            btn.textContent = 'Dezactivează Comenzile'
-            btn.style.background = '#e53e3e'
-            btn.style.color = 'white'
-            txt.textContent = 'Comenzi Active'
-            txt.style.color = 'var(--primary-green)'
-        } else {
-            btn.textContent = 'Activează Comenzile'
-            btn.style.background = 'var(--primary-green)'
-            btn.style.color = 'white'
-            txt.textContent = 'Comenzi Inactive'
-            txt.style.color = '#e53e3e'
-        }
-    } catch (err) {
-        console.error('Error updating ordering UI:', err)
-    }
-}
-
-window.toggleOrdering = async function() {
-    const current = localStorage.getItem('presso_ordering') || 'enabled'
-    const next = current === 'disabled' ? 'enabled' : 'disabled'
-    try {
-        await SupabaseService.setSetting('presso_ordering', next)
-        await updateOrderingUI()
-    } catch (err) {
-        console.error('Error toggling ordering:', err)
     }
 }
 
