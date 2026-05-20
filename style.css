@@ -472,27 +472,38 @@ header p {
     }
     
     header {
-        padding: 1rem;
+        padding: 0.6rem 1rem;
     }
     
     .header-container {
-        flex-direction: column;
-        gap: 0.75rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .header-logo {
+        height: 38px;
     }
     
     .header-nav {
-        width: 100%;
-        flex-direction: column;
-        gap: 0.4rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.2rem;
+        width: auto;
     }
     
     .nav-link {
-        width: 100%;
+        width: auto;
         text-align: center;
+        font-size: 0.72rem;
+        padding: 0.35rem 0.55rem;
+        border-radius: 14px;
     }
     
     .main-offset {
-        padding-top: 210px;
+        padding-top: 75px;
     }
     
     h1 {
