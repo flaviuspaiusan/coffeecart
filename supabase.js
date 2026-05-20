@@ -171,20 +171,36 @@ export const SupabaseService = {
             .from('settings')
             .select('value')
             .eq('key', key)
-            .order('id', { ascending: false })
             .limit(1)
-        if (error) throw error
+        if (error) {
+            console.error('getSetting error for', key, error)
+            return null
+        }
         return data && data.length > 0 ? data[0].value : null
     },
 
     async setSetting(key, value) {
-        // Delete existing rows first to prevent duplicates, then insert fresh
-        await supabase.from('settings').delete().eq('key', key)
-        const { data, error } = await supabase
+        // Try update first (works if row exists)
+        const { data: existing } = await supabase
             .from('settings')
-            .insert([{ key, value }])
-        if (error) throw error
-        return data
+            .select('key')
+            .eq('key', key)
+            .limit(1)
+
+        if (existing && existing.length > 0) {
+            const { data, error } = await supabase
+                .from('settings')
+                .update({ value })
+                .eq('key', key)
+            if (error) throw error
+            return data
+        } else {
+            const { data, error } = await supabase
+                .from('settings')
+                .insert([{ key, value }])
+            if (error) throw error
+            return data
+        }
     },
 
     // Real-time subscriptions
