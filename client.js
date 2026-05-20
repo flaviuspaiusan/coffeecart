@@ -76,12 +76,27 @@ function renderMenu() {
     const items = [...currentMenu]
     const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
 
-    const orderMap = { 'espresso': 1, 'presso': 2, 'cortado': 3, 'americano': 4, 'cappuccino': 5, 'cappucino': 5 }
-    items.sort((a, b) => {
-        const valA = orderMap[a.name?.toLowerCase()] || orderMap[a.id] || 99
-        const valB = orderMap[b.name?.toLowerCase()] || orderMap[b.id] || 99
-        return valA - valB
-    })
+    const getSortValue = (item) => {
+        if (!item) return 99
+        const nameLower = item.name ? item.name.toLowerCase() : ''
+        const idLower = item.id ? item.id.toLowerCase() : ''
+        
+        if (idLower === 'espresso' || nameLower === 'espresso') return 1
+        if (idLower === 'presso' || nameLower === 'presso') return 2
+        if (idLower === 'cortado' || nameLower === 'cortado') return 3
+        if (idLower === 'americano' || nameLower === 'americano') return 4
+        if (idLower.includes('cappuccino') || nameLower.includes('cappuccino') || idLower.includes('cappucino') || nameLower.includes('cappucino')) return 5
+        if (idLower.includes('flat') || nameLower.includes('flat')) return 6
+        if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !idLower.includes('pistachio') && !idLower.includes('tiramisu'))) return 7
+        if (idLower.includes('iced_coffee') || nameLower.includes('iced coffee') || idLower.includes('iced coffeee') || nameLower.includes('iced coffeee')) return 8
+        if (idLower.includes('pistachio') || nameLower.includes('pistachio')) return 9
+        if (idLower.includes('tiramisu') || nameLower.includes('tiramisu')) return 10
+        if (idLower.includes('cold_brew_tonic') || nameLower.includes('cold brew tonic')) return 11
+        if (idLower.includes('tropical') || nameLower.includes('tropical')) return 12
+        return 99
+    }
+
+    items.sort((a, b) => getSortValue(a) - getSortValue(b))
 
     items.forEach(item => {
         const card = document.createElement('div')
