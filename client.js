@@ -26,6 +26,11 @@ const activeOrderBanner = document.getElementById('active-order-banner')
 
 async function init() {
     try {
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('scan') === 'presso2026') {
+            localStorage.setItem('presso_scan_access', 'presso2026')
+        }
+
         await loadMenu()
         await loadSettings()
         renderActiveOrder()
@@ -75,6 +80,15 @@ function renderMenu() {
     menuGrid.innerHTML = ''
     const items = [...currentMenu]
     const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
+    const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
+
+    // Control the visibility of the unauthorized banner
+    const unauthorizedBanner = document.getElementById('unauthorized-banner')
+    if (unauthorizedBanner) {
+        unauthorizedBanner.style.display = (orderingEnabled && !hasScanAccess) ? 'block' : 'none'
+    }
+
+    const canOrder = orderingEnabled && hasScanAccess
 
     const getSortValue = (item) => {
         if (!item) return 99
@@ -101,14 +115,17 @@ function renderMenu() {
     items.forEach(item => {
         const card = document.createElement('div')
         card.className = 'card'
+        
+        const imageClickAttr = canOrder ? `onclick="openModal('${item.id}')" style="cursor: pointer;"` : ''
+        
         card.innerHTML = `
-            <div class="card-image-container" onclick="openModal('${item.id}')" style="cursor: pointer;">
+            <div class="card-image-container" ${imageClickAttr}>
                 <img src="${item.image}" alt="${item.name}" class="card-image" ${item.id === 'pistachio_latte' ? 'style="object-position: center 85%;"' : ''}>
             </div>
             <div class="card-content">
                 <h3 class="card-title">${item.name}</h3>
                 <p class="card-desc">${item.desc}</p>
-                ${orderingEnabled ? `<button class="btn" onclick="openModal('${item.id}')">Comandă</button>` : ''}
+                ${canOrder ? `<button class="btn" onclick="openModal('${item.id}')">Comandă</button>` : ''}
             </div>
         `
         menuGrid.appendChild(card)
@@ -116,6 +133,13 @@ function renderMenu() {
 }
 
 window.openModal = function(itemId) {
+    const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
+    const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
+    
+    if (!orderingEnabled || !hasScanAccess) {
+        return // Block modal access for unauthorized visitors
+    }
+
     const item = currentMenu.find(i => i.id === itemId)
     if (!item) return
 
@@ -149,8 +173,7 @@ window.openModal = function(itemId) {
 
     const confirmBtn = document.getElementById('btn-confirm-order')
     if (confirmBtn) {
-        const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
-        confirmBtn.style.display = orderingEnabled ? '' : 'none'
+        confirmBtn.style.display = ''
     }
 }
 
@@ -174,6 +197,14 @@ function showToast(message) {
 
 checkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault()
+
+    const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
+    const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
+    
+    if (!orderingEnabled || !hasScanAccess) {
+        alert('Comenzile nu sunt disponibile pentru tine momentan.')
+        return
+    }
 
     const itemId = document.getElementById('item-id').value
     const item = currentMenu.find(i => i.id === itemId)
