@@ -114,12 +114,17 @@ window.openModal = function(itemId) {
     }
 
     const espressoOptions = document.getElementById('espresso-options')
-    if (espressoOptions) espressoOptions.style.display = itemId === 'espresso' ? 'block' : 'none'
+    const itemNameLower = item.name ? item.name.toLowerCase() : ''
+    if (espressoOptions) {
+        espressoOptions.style.display = (itemId === 'espresso' || itemNameLower === 'espresso') ? 'block' : 'none'
+    }
 
-    const aromaIds = ['cappuccino', 'flat_white', 'latte_macchiato', 'iced_coffee']
+    const aromaKeywords = ['cappuccino', 'cappucino', 'latte', 'flat', 'iced coffee', 'iced coffeee', 'iced_coffee']
+    const isAromaEligible = aromaKeywords.some(kw => itemNameLower.includes(kw) || itemId.toLowerCase().includes(kw))
+
     const aromaOptions = document.getElementById('aroma-options')
     if (aromaOptions) {
-        aromaOptions.style.display = aromaIds.includes(itemId) ? 'block' : 'none'
+        aromaOptions.style.display = isAromaEligible ? 'block' : 'none'
         const aromaCheckbox = document.getElementById('aroma-caramel')
         if (aromaCheckbox) aromaCheckbox.checked = false
     }
