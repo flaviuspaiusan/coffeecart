@@ -272,6 +272,16 @@ checkoutForm.addEventListener('submit', async (e) => {
 btnCancel.addEventListener('click', closeModal)
 
 async function renderActiveOrder() {
+    const activeEventId = localStorage.getItem('presso_active_event_id')
+    const scannedEventId = localStorage.getItem('presso_scanned_event_id')
+    const hasActiveEvent = !!activeEventId
+    const hasScanAccess = hasActiveEvent && activeEventId === scannedEventId
+
+    if (!hasScanAccess) {
+        if (activeOrderBanner) activeOrderBanner.style.display = 'none'
+        return
+    }
+
     const activeOrderId = localStorage.getItem('my_active_order_id')
     if (!activeOrderId) {
         if (activeOrderBanner) activeOrderBanner.style.display = 'none'
