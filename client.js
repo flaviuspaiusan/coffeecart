@@ -246,9 +246,12 @@ checkoutForm.addEventListener('submit', async (e) => {
     if (aromaCheckbox && aromaCheckbox.checked) finalItemName += ` + ${aromaCheckbox.value}`
 
     try {
-        const existingOrders = await SupabaseService.getOrders()
-        const orderNumber = existingOrders.length > 0 ? Math.max(...existingOrders.map(o => o.orderNumber || 0)) + 1 : 1
         const activeEventId = localStorage.getItem('presso_active_event_id')
+        const existingOrders = await SupabaseService.getOrders()
+        
+        // Filter orders belonging to the current event to calculate local order numbers starting from 1
+        const eventOrders = existingOrders.filter(o => o.eventId === activeEventId)
+        const orderNumber = eventOrders.length > 0 ? Math.max(...eventOrders.map(o => o.orderNumber || 0)) + 1 : 1
 
         const order = {
             id: 'ord_' + Date.now(),
