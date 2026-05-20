@@ -24,16 +24,22 @@ const checkoutForm = document.getElementById('checkout-form')
 const toastContainer = document.getElementById('toast-container')
 const activeOrderBanner = document.getElementById('active-order-banner')
 
+let dbPrices = {} // prices loaded from Supabase settings
+
 async function init() {
     try {
         propagateScanParam()
         await loadMenu()
         await loadSettings()
+        await loadPrices()
         renderActiveOrder()
 
         SupabaseService.subscribeToOrders(() => renderActiveOrder())
         SupabaseService.subscribeToMenu(() => loadMenu())
-        SupabaseService.subscribeToSettings(() => loadSettings())
+        SupabaseService.subscribeToSettings(() => {
+            loadSettings()
+            loadPrices()
+        })
     } catch (err) {
         console.error('Initialization error:', err)
     }
@@ -75,10 +81,28 @@ async function loadSettings() {
         } else {
             localStorage.removeItem('presso_active_event_id')
         }
-
         renderMenu()
     } catch (err) {
         console.error('Error loading settings:', err)
+    }
+}
+
+async function loadPrices() {
+    try {
+        const rawPrices = await SupabaseService.getSetting('presso_prices')
+        if (rawPrices) {
+            if (typeof rawPrices === 'string') {
+                dbPrices = JSON.parse(rawPrices)
+            } else if (typeof rawPrices === 'object') {
+                dbPrices = rawPrices
+            }
+            console.log('[Presso] Prices loaded from DB:', dbPrices)
+        } else {
+            console.log('[Presso] No saved prices in DB, using defaults.')
+        }
+        renderMenu()
+    } catch (err) {
+        console.error('Error loading prices:', err)
     }
 }
 
@@ -162,21 +186,29 @@ function renderMenu() {
 
 function getItemPrice(item) {
     if (!item) return ''
-    const idLower = item.id ? item.id.toLowerCase() : ''
-    const nameLower = item.name ? item.name.toLowerCase() : ''
+    const id = item.id ? item.id.toLowerCase() : ''
+    const name = item.name ? item.name.toLowerCase() : ''
 
-    if (idLower === 'espresso' || nameLower === 'espresso') return '9 lei (Single) · 10 lei (Double)'
-    if (idLower === 'presso' || nameLower === 'presso') return '13 lei'
-    if (idLower === 'cortado' || nameLower === 'cortado') return '11 lei'
-    if (idLower === 'americano' || nameLower === 'americano') return '10 lei'
-    if (idLower.includes('cappuccino') || nameLower.includes('cappuccino') || idLower.includes('cappucino') || nameLower.includes('cappucino')) return '13 lei'
-    if (idLower.includes('flat') || nameLower.includes('flat')) return '14 lei'
-    if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !idLower.includes('pistachio') && !idLower.includes('tiramisu'))) return '14 lei'
-    if (idLower.includes('iced_coffee') || nameLower.includes('iced coffee') || idLower.includes('iced coffeee') || nameLower.includes('iced coffeee')) return '15 lei'
-    if (idLower.includes('pistachio') || nameLower.includes('pistachio')) return '17 lei'
-    if (idLower.includes('tiramisu') || nameLower.includes('tiramisu')) return '17 lei'
-    if (idLower.includes('cold_brew_tonic') || nameLower.includes('cold brew tonic')) return '16 lei'
-    if (idLower.includes('tropical') || nameLower.includes('tropical')) return '16 lei'
+    // Helper: look up in DB prices by item id
+    const dbEntry = dbPrices[item.id]
+
+    if (id === 'espresso' || name === 'espresso') {
+        const s = dbEntry ? (dbEntry.single || '9') : '9'
+        const d = dbEntry ? (dbEntry.double || '10') : '10'
+        return `${s} lei (Single) · ${d} lei (Double)`
+    }
+    const p = (key) => dbPrices[key] ? dbPrices[key].price : null
+    if (id === 'presso' || name === 'presso') return `${p('presso') || '13'} lei`
+    if (id === 'cortado' || name === 'cortado') return `${p('cortado') || '11'} lei`
+    if (id === 'americano' || name === 'americano') return `${p('americano') || '10'} lei`
+    if (id.includes('cappuccino') || name.includes('cappuccino') || id.includes('cappucino') || name.includes('cappucino')) return `${p('cappuccino') || '13'} lei`
+    if (id.includes('flat') || name.includes('flat')) return `${p('flat_white') || '14'} lei`
+    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !id.includes('pistachio') && !id.includes('tiramisu'))) return `${p('latte_macchiato') || '14'} lei`
+    if (id.includes('iced_coffee') || name.includes('iced coffee') || id.includes('iced coffeee') || name.includes('iced coffeee')) return `${p('iced_coffee') || '15'} lei`
+    if (id.includes('pistachio') || name.includes('pistachio')) return `${p('pistachio_latte') || '17'} lei`
+    if (id.includes('tiramisu') || name.includes('tiramisu')) return `${p('tiramisu_latte') || '17'} lei`
+    if (id.includes('cold_brew_tonic') || name.includes('cold brew tonic')) return `${p('cold_brew_tonic') || '16'} lei`
+    if (id.includes('tropical') || name.includes('tropical')) return `${p('tropical_cold_brew') || '16'} lei`
     return ''
 }
 
@@ -212,14 +244,16 @@ window.openModal = function(itemId) {
     const modalPrice = document.getElementById('modal-price')
     if (modalPrice) {
         const basePrice = getItemPrice(item)
-        modalPrice.textContent = isEspresso ? '9 lei' : basePrice
+        const espressoSingle = dbPrices['espresso'] ? (dbPrices['espresso'].single || '9') : '9'
+        const espressoDouble = dbPrices['espresso'] ? (dbPrices['espresso'].double || '10') : '10'
+        modalPrice.textContent = isEspresso ? `${espressoSingle} lei` : basePrice
         modalPrice.style.display = basePrice ? 'block' : 'none'
 
         if (isEspresso) {
             // Update price live when Single/Double changes
             document.querySelectorAll('input[name="espresso-type"]').forEach(radio => {
                 radio.onchange = () => {
-                    modalPrice.textContent = radio.value === 'Double' ? '10 lei' : '9 lei'
+                    modalPrice.textContent = radio.value === 'Double' ? `${espressoDouble} lei` : `${espressoSingle} lei`
                 }
             })
             // Reset to Single price
