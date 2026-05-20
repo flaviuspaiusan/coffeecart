@@ -81,14 +81,31 @@ function renderMenu() {
     const items = [...currentMenu]
     const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
     const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
 
     // Control the visibility of the unauthorized banner
     const unauthorizedBanner = document.getElementById('unauthorized-banner')
     if (unauthorizedBanner) {
-        unauthorizedBanner.style.display = (orderingEnabled && !hasScanAccess) ? 'block' : 'none'
+        if (!orderingEnabled || !hasActiveEvent) {
+            unauthorizedBanner.style.display = 'block'
+            unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Comenzi închise ☕'
+            unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Momentan nu se pot plasa comenzi. Ne vedem la următorul eveniment!'
+            unauthorizedBanner.style.borderColor = '#e53e3e'
+            unauthorizedBanner.style.background = 'rgba(229, 62, 62, 0.05)'
+            unauthorizedBanner.querySelector('p:first-child').style.color = '#e53e3e'
+        } else if (!hasScanAccess) {
+            unauthorizedBanner.style.display = 'block'
+            unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Meniu în mod vizualizare 👁️'
+            unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!'
+            unauthorizedBanner.style.borderColor = 'var(--primary-green)'
+            unauthorizedBanner.style.background = 'rgba(93, 122, 78, 0.05)'
+            unauthorizedBanner.querySelector('p:first-child').style.color = 'var(--primary-green)'
+        } else {
+            unauthorizedBanner.style.display = 'none'
+        }
     }
 
-    const canOrder = orderingEnabled && hasScanAccess
+    const canOrder = orderingEnabled && hasActiveEvent && hasScanAccess
 
     const getSortValue = (item) => {
         if (!item) return 99
@@ -135,9 +152,10 @@ function renderMenu() {
 window.openModal = function(itemId) {
     const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
     const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
     
-    if (!orderingEnabled || !hasScanAccess) {
-        return // Block modal access for unauthorized visitors
+    if (!orderingEnabled || !hasScanAccess || !hasActiveEvent) {
+        return // Block modal access for unauthorized/inactive states
     }
 
     const item = currentMenu.find(i => i.id === itemId)
@@ -200,8 +218,9 @@ checkoutForm.addEventListener('submit', async (e) => {
 
     const orderingEnabled = localStorage.getItem('presso_ordering') !== 'disabled'
     const hasScanAccess = localStorage.getItem('presso_scan_access') === 'presso2026'
+    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
     
-    if (!orderingEnabled || !hasScanAccess) {
+    if (!orderingEnabled || !hasScanAccess || !hasActiveEvent) {
         alert('Comenzile nu sunt disponibile pentru tine momentan.')
         return
     }
