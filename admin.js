@@ -553,4 +553,98 @@ window.clearOffers = async function() {
     }
 }
 
+// ── PRICE MANAGEMENT ──
+const DEFAULT_PRICES = [
+    { id: 'espresso',          name: 'Espresso',                      priceDisplay: '9 / 10', note: 'Single / Double' },
+    { id: 'presso',            name: 'Presso',                        priceDisplay: '13' },
+    { id: 'cortado',           name: 'Cortado',                       priceDisplay: '11' },
+    { id: 'americano',         name: 'Americano',                     priceDisplay: '10' },
+    { id: 'cappuccino',        name: 'Cappuccino',                    priceDisplay: '13' },
+    { id: 'flat_white',        name: 'Flat White',                    priceDisplay: '14' },
+    { id: 'latte_macchiato',   name: 'Latte Macchiato',               priceDisplay: '14' },
+    { id: 'iced_coffee',       name: 'Iced Coffee',                   priceDisplay: '15' },
+    { id: 'pistachio_latte',   name: 'Pistachio Strawberry Iced Latte', priceDisplay: '17' },
+    { id: 'tiramisu_latte',    name: 'Tiramisu Iced Latte',           priceDisplay: '17' },
+    { id: 'cold_brew_tonic',   name: 'Cold Brew Tonic',               priceDisplay: '16' },
+    { id: 'tropical_cold_brew',name: 'Tropical Cold Brew',            priceDisplay: '16' },
+]
+
+window.openPricesModal = async function() {
+    const modal = document.getElementById('prices-modal')
+    const body = document.getElementById('prices-form-body')
+    body.innerHTML = '<p style="color: var(--text-muted); font-family: \'Inter\', sans-serif;">Se încarcă prețurile...</p>'
+    modal.classList.add('active')
+
+    let savedPrices = {}
+    try {
+        const raw = await SupabaseService.getSetting('presso_prices')
+        if (raw) savedPrices = JSON.parse(raw)
+    } catch (e) { /* use defaults */ }
+
+    body.innerHTML = ''
+    DEFAULT_PRICES.forEach(item => {
+        const saved = savedPrices[item.id]
+        const isEspresso = item.id === 'espresso'
+
+        const row = document.createElement('div')
+        row.style.cssText = 'display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 10px;'
+
+        if (isEspresso) {
+            const single = saved ? (saved.single || '9') : '9'
+            const double = saved ? (saved.double || '10') : '10'
+            row.innerHTML = `
+                <span style="flex: 1; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--text-main);">${item.name}</span>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="number" id="price-${item.id}-single" value="${single}" min="0" step="0.5"
+                        style="width: 70px; padding: 0.4rem 0.5rem; border: 1px solid var(--glass-border); border-radius: 6px; background: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; text-align: center;">
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Single</span>
+                    <span style="color: var(--text-muted);">/</span>
+                    <input type="number" id="price-${item.id}-double" value="${double}" min="0" step="0.5"
+                        style="width: 70px; padding: 0.4rem 0.5rem; border: 1px solid var(--glass-border); border-radius: 6px; background: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; text-align: center;">
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Double</span>
+                    <span style="color: var(--primary-brown); font-weight: 600; font-family: 'Inter', sans-serif; margin-left: 0.25rem;">lei</span>
+                </div>
+            `
+        } else {
+            const price = saved ? (saved.price || item.priceDisplay) : item.priceDisplay
+            row.innerHTML = `
+                <span style="flex: 1; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--text-main);">${item.name}</span>
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="number" id="price-${item.id}" value="${price}" min="0" step="0.5"
+                        style="width: 80px; padding: 0.4rem 0.5rem; border: 1px solid var(--glass-border); border-radius: 6px; background: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; text-align: center;">
+                    <span style="color: var(--primary-brown); font-weight: 600; font-family: 'Inter', sans-serif;">lei</span>
+                </div>
+            `
+        }
+        body.appendChild(row)
+    })
+}
+
+window.closePricesModal = function() {
+    document.getElementById('prices-modal').classList.remove('active')
+}
+
+window.savePrices = async function() {
+    const prices = {}
+    DEFAULT_PRICES.forEach(item => {
+        if (item.id === 'espresso') {
+            const single = document.getElementById('price-espresso-single')?.value || '9'
+            const double = document.getElementById('price-espresso-double')?.value || '10'
+            prices['espresso'] = { single, double }
+        } else {
+            const val = document.getElementById(`price-${item.id}`)?.value || item.priceDisplay
+            prices[item.id] = { price: val }
+        }
+    })
+
+    try {
+        await SupabaseService.setSetting('presso_prices', JSON.stringify(prices))
+        closePricesModal()
+        alert('✅ Prețurile au fost salvate cu succes!')
+    } catch (err) {
+        console.error('Error saving prices:', err)
+        alert('Eroare la salvarea prețurilor.')
+    }
+}
+
 initAdmin()
