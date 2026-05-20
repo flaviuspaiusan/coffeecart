@@ -143,6 +143,7 @@ function renderMenu() {
         card.className = 'card'
         
         const imageClickAttr = canOrder ? `onclick="openModal('${item.id}')" style="cursor: pointer;"` : ''
+        const priceText = getItemPrice(item)
         
         card.innerHTML = `
             <div class="card-image-container" ${imageClickAttr}>
@@ -150,12 +151,33 @@ function renderMenu() {
             </div>
             <div class="card-content">
                 <h3 class="card-title">${item.name}</h3>
+                ${priceText ? `<p class="card-price">${priceText}</p>` : ''}
                 <p class="card-desc">${item.desc}</p>
                 ${canOrder ? `<button class="btn" onclick="openModal('${item.id}')">Comandă</button>` : ''}
             </div>
         `
         menuGrid.appendChild(card)
     })
+}
+
+function getItemPrice(item) {
+    if (!item) return ''
+    const idLower = item.id ? item.id.toLowerCase() : ''
+    const nameLower = item.name ? item.name.toLowerCase() : ''
+
+    if (idLower === 'espresso' || nameLower === 'espresso') return '9 lei (Single) · 10 lei (Double)'
+    if (idLower === 'presso' || nameLower === 'presso') return '13 lei'
+    if (idLower === 'cortado' || nameLower === 'cortado') return '11 lei'
+    if (idLower === 'americano' || nameLower === 'americano') return '10 lei'
+    if (idLower.includes('cappuccino') || nameLower.includes('cappuccino') || idLower.includes('cappucino') || nameLower.includes('cappucino')) return '13 lei'
+    if (idLower.includes('flat') || nameLower.includes('flat')) return '14 lei'
+    if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !idLower.includes('pistachio') && !idLower.includes('tiramisu'))) return '14 lei'
+    if (idLower.includes('iced_coffee') || nameLower.includes('iced coffee') || idLower.includes('iced coffeee') || nameLower.includes('iced coffeee')) return '15 lei'
+    if (idLower.includes('pistachio') || nameLower.includes('pistachio')) return '17 lei'
+    if (idLower.includes('tiramisu') || nameLower.includes('tiramisu')) return '17 lei'
+    if (idLower.includes('cold_brew_tonic') || nameLower.includes('cold brew tonic')) return '16 lei'
+    if (idLower.includes('tropical') || nameLower.includes('tropical')) return '16 lei'
+    return ''
 }
 
 window.openModal = function(itemId) {
@@ -178,10 +200,32 @@ window.openModal = function(itemId) {
         modalImg.style.objectPosition = item.id === 'pistachio_latte' ? 'center 85%' : 'center'
     }
 
-    const espressoOptions = document.getElementById('espresso-options')
     const itemNameLower = item.name ? item.name.toLowerCase() : ''
+    const isEspresso = (itemId === 'espresso' || itemNameLower === 'espresso')
+
+    const espressoOptions = document.getElementById('espresso-options')
     if (espressoOptions) {
-        espressoOptions.style.display = (itemId === 'espresso' || itemNameLower === 'espresso') ? 'block' : 'none'
+        espressoOptions.style.display = isEspresso ? 'block' : 'none'
+    }
+
+    // Show price in modal, dynamic for espresso
+    const modalPrice = document.getElementById('modal-price')
+    if (modalPrice) {
+        const basePrice = getItemPrice(item)
+        modalPrice.textContent = isEspresso ? '9 lei' : basePrice
+        modalPrice.style.display = basePrice ? 'block' : 'none'
+
+        if (isEspresso) {
+            // Update price live when Single/Double changes
+            document.querySelectorAll('input[name="espresso-type"]').forEach(radio => {
+                radio.onchange = () => {
+                    modalPrice.textContent = radio.value === 'Double' ? '10 lei' : '9 lei'
+                }
+            })
+            // Reset to Single price
+            const singleRadio = document.querySelector('input[name="espresso-type"][value="Single"]')
+            if (singleRadio) singleRadio.checked = true
+        }
     }
 
     const aromaKeywords = ['cappuccino', 'cappucino', 'latte', 'flat', 'iced coffee', 'iced coffeee', 'iced_coffee']
