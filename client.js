@@ -1,6 +1,8 @@
 import { SupabaseService } from './supabase.js'
+import { supabase } from './supabase.js'
 
 let currentMenu = []
+let activeEventId = null  // single source of truth — updated by loadSettings()
 
 const defaultMenuItems = [
     { id: 'espresso', name: 'Espresso', desc: '20/40 ml', image: 'assets/espresso_image_1778599544907.png' },
@@ -41,10 +43,10 @@ async function init() {
             await loadPrices()
         })
 
-        // Polling fallback: re-check every 5s in case Realtime misses the settings update
+        // Polling fallback every 3s — garanteaza sincronizarea chiar daca Realtime nu functioneaza
         setInterval(async () => {
             await loadSettings()
-        }, 5000)
+        }, 3000)
     } catch (err) {
         console.error('Initialization error:', err)
     }
@@ -80,13 +82,28 @@ async function loadMenu() {
 
 async function loadSettings() {
     try {
-        const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
-        // Treat null, undefined AND empty string as "no active event"
-        if (activeEventId && activeEventId !== '') {
+        // Method 1: read from settings table
+        let eventId = await SupabaseService.getSetting('presso_active_event_id')
+
+        // Method 2 (fallback): query events table directly for an active event
+        if (!eventId || eventId === '') {
+            const { data: activeEvents } = await supabase
+                .from('events')
+                .select('id')
+                .eq('status', 'active')
+                .limit(1)
+            eventId = (activeEvents && activeEvents.length > 0) ? activeEvents[0].id : null
+        }
+
+        activeEventId = (eventId && eventId !== '') ? eventId : null
+
+        // Keep localStorage in sync (for order submission)
+        if (activeEventId) {
             localStorage.setItem('presso_active_event_id', activeEventId)
         } else {
             localStorage.removeItem('presso_active_event_id')
         }
+
         renderMenu()
     } catch (err) {
         console.error('Error loading settings:', err)
@@ -116,7 +133,7 @@ function renderMenu() {
     if (!menuGrid) return
     menuGrid.innerHTML = ''
     const items = [...currentMenu]
-    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasActiveEvent = !!activeEventId   // use module variable, not localStorage
     const hasScanAccess = window.location.search.includes('scan=presso2026')
 
     // Control the visibility of the unauthorized banner
@@ -270,7 +287,7 @@ window.closeRevolutModal = function() {
 }
 
 window.openModal = function(itemId) {
-    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasActiveEvent = !!activeEventId   // use module variable
     const hasScanAccess = window.location.search.includes('scan=presso2026')
     
     if (!hasScanAccess || !hasActiveEvent) {
@@ -359,7 +376,7 @@ function showToast(message) {
 checkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault()
 
-    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
+    const hasActiveEvent = !!activeEventId   // use module variable
     const hasScanAccess = window.location.search.includes('scan=presso2026')
     
     if (!hasScanAccess || !hasActiveEvent) {
@@ -381,11 +398,11 @@ checkoutForm.addEventListener('submit', async (e) => {
     if (aromaCheckbox && aromaCheckbox.checked) finalItemName += ` + ${aromaCheckbox.value}`
 
     try {
-        const activeEventId = localStorage.getItem('presso_active_event_id')
+        const currentActiveEventId = activeEventId  // use module variable
         const existingOrders = await SupabaseService.getOrders()
         
         // Filter orders belonging to the current event to calculate local order numbers starting from 1
-        const eventOrders = existingOrders.filter(o => o.eventId === activeEventId)
+        const eventOrders = existingOrders.filter(o => o.eventId === currentActiveEventId)
         const orderNumber = eventOrders.length > 0 ? Math.max(...eventOrders.map(o => o.orderNumber || 0)) + 1 : 1
 
         const order = {
@@ -395,7 +412,7 @@ checkoutForm.addEventListener('submit', async (e) => {
             customerName,
             timestamp: new Date().toISOString(),
             status: 'pending',
-            eventId: activeEventId || null
+            eventId: currentActiveEventId || null
         }
 
         // Determine the numeric price for the payment modal
@@ -423,7 +440,6 @@ checkoutForm.addEventListener('submit', async (e) => {
 btnCancel.addEventListener('click', closeModal)
 
 async function renderActiveOrder() {
-    const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
     const hasScanAccess = window.location.search.includes('scan=presso2026')
 
     if (!hasScanAccess) {
