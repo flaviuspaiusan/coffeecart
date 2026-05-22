@@ -213,6 +213,56 @@ function getItemPrice(item) {
     return ''
 }
 
+// Returns the numeric price for a given item + espresso type selection
+function getItemPriceNumeric(item, espressoType) {
+    if (!item) return null
+    const id = item.id ? item.id.toLowerCase() : ''
+    const name = item.name ? item.name.toLowerCase() : ''
+    const dbEntry = dbPrices[item.id]
+    const p = (key) => dbPrices[key] ? Number(dbPrices[key].price) : null
+
+    if (id === 'espresso' || name === 'espresso') {
+        if (espressoType === 'Double') {
+            return dbEntry ? Number(dbEntry.double || 10) : 10
+        }
+        return dbEntry ? Number(dbEntry.single || 9) : 9
+    }
+    if (id === 'presso' || name === 'presso') return p('presso') || 13
+    if (id === 'cortado' || name === 'cortado') return p('cortado') || 11
+    if (id === 'americano' || name === 'americano') return p('americano') || 10
+    if (id.includes('cappuccino') || name.includes('cappuccino') || id.includes('cappucino') || name.includes('cappucino')) return p('cappuccino') || 13
+    if (id.includes('flat') || name.includes('flat')) return p('flat_white') || 14
+    if (id.includes('pistachio') || name.includes('pistachio')) return p('pistachio_latte') || 17
+    if (id.includes('tiramisu') || name.includes('tiramisu')) return p('tiramisu_latte') || 17
+    if (id.includes('cold_brew_tonic') || name.includes('cold brew tonic')) return p('cold_brew_tonic') || 16
+    if (id.includes('tropical') || name.includes('tropical')) return p('tropical_cold_brew') || 16
+    if (id.includes('iced_coffee') || name.includes('iced coffee') || id.includes('iced coffeee') || name.includes('iced coffeee')) return p('iced_coffee') || 15
+    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !id.includes('pistachio') && !id.includes('tiramisu'))) return p('latte_macchiato') || 14
+    return null
+}
+
+window.openRevolutModal = function(itemName, amount) {
+    const overlay = document.getElementById('revolut-modal')
+    if (!overlay) return
+    document.getElementById('revolut-item-name').textContent = itemName
+    document.getElementById('revolut-amount').textContent = amount
+    document.getElementById('revolut-amount-hint').textContent = amount
+    overlay.style.display = 'flex'
+    // Trigger animation on next frame
+    requestAnimationFrame(() => {
+        overlay.style.opacity = '1'
+        overlay.style.pointerEvents = 'auto'
+    })
+}
+
+window.closeRevolutModal = function() {
+    const overlay = document.getElementById('revolut-modal')
+    if (!overlay) return
+    overlay.style.opacity = '0'
+    overlay.style.pointerEvents = 'none'
+    setTimeout(() => { overlay.style.display = 'none' }, 300)
+}
+
 window.openModal = function(itemId) {
     const hasActiveEvent = !!localStorage.getItem('presso_active_event_id')
     const hasScanAccess = window.location.search.includes('scan=presso2026')
@@ -342,12 +392,22 @@ checkoutForm.addEventListener('submit', async (e) => {
             eventId: activeEventId || null
         }
 
+        // Determine the numeric price for the payment modal
+        const espressoTypeEl = document.querySelector('input[name="espresso-type"]:checked')
+        const espressoType = espressoTypeEl ? espressoTypeEl.value : 'Single'
+        const priceAmount = getItemPriceNumeric(item, espressoType)
+
         await SupabaseService.createOrder(order)
         localStorage.setItem('my_active_order_id', order.id)
 
         closeModal()
         showToast(`Comanda #${orderNumber} pentru ${item.name} a fost trimisă!`)
         renderActiveOrder()
+
+        // Open Revolut payment modal
+        if (priceAmount !== null) {
+            openRevolutModal(finalItemName, priceAmount)
+        }
     } catch (err) {
         console.error('Error submitting order:', err)
         alert('A apărut o eroare la trimiterea comenzii.')
