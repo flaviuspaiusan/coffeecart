@@ -238,7 +238,9 @@
                 </div>
 
                 <!-- Revolut button -->
-                <a id="revolut-pay-btn" href="https://revolut.me/flaviuar8u" target="_blank" rel="noopener" style="
+                <a id="revolut-pay-btn" href="https://revolut.me/pressocart" target="_blank" rel="noopener"
+                   onclick="document.getElementById('revolut-confirm-btn').style.display='flex';"
+                   style="
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -285,6 +287,7 @@
                     cursor: pointer;
                     transition: transform 0.2s ease, box-shadow 0.2s ease;
                     box-shadow: 0 4px 20px rgba(27, 67, 50, 0.35);
+                    margin-bottom: 0.85rem;
                 " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(27,67,50,0.45)';"
                    onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(27,67,50,0.35)';">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -293,6 +296,28 @@
                         <path d="M6 12h.01M18 12h.01"/>
                     </svg>
                     Plătește cash
+                </button>
+
+                <!-- Confirm payment button — apare doar dupa ce clientul apasa Revolut -->
+                <button id="revolut-confirm-btn" onclick="closeRevolutModal()" style="
+                    display: none;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
+                    width: 100%;
+                    padding: 0.85rem 1.5rem;
+                    background: transparent;
+                    border: 2px solid var(--primary-green);
+                    border-radius: 12px;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    color: var(--primary-green);
+                    cursor: pointer;
+                    transition: background 0.2s, color 0.2s;
+                " onmouseover="this.style.background='var(--primary-green)';this.style.color='white';"
+                   onmouseout="this.style.background='transparent';this.style.color='var(--primary-green)';">
+                    ✓ Am plătit, mulțumesc!
                 </button>
             </div>
         </div>

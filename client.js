@@ -283,7 +283,12 @@ window.closeRevolutModal = function() {
     if (!overlay) return
     overlay.style.opacity = '0'
     overlay.style.pointerEvents = 'none'
-    setTimeout(() => { overlay.style.display = 'none' }, 300)
+    setTimeout(() => {
+        overlay.style.display = 'none'
+        // Reset confirm button for next order
+        const confirmBtn = document.getElementById('revolut-confirm-btn')
+        if (confirmBtn) confirmBtn.style.display = 'none'
+    }, 300)
 }
 
 window.openModal = function(itemId) {
