@@ -266,21 +266,33 @@
                     Plătește pe Revolut
                 </a>
 
-                <!-- Close button -->
-                <button id="revolut-close-btn" onclick="closeRevolutModal()" style="
+                <!-- Cash button -->
+                <button onclick="closeRevolutModal()" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
                     width: 100%;
-                    padding: 0.75rem;
-                    background: transparent;
-                    border: 1px solid var(--glass-border);
-                    border-radius: 10px;
+                    padding: 1rem 1.5rem;
+                    background: linear-gradient(135deg, #2d6a4f, #1b4332);
+                    color: white;
+                    border-radius: 12px;
+                    border: none;
                     font-family: 'Inter', sans-serif;
-                    font-size: 0.9rem;
-                    color: var(--text-muted);
+                    font-size: 1rem;
+                    font-weight: 700;
+                    letter-spacing: 0.02em;
                     cursor: pointer;
-                    transition: border-color 0.2s, color 0.2s;
-                " onmouseover="this.style.borderColor='var(--primary-green)';this.style.color='var(--primary-green)';"
-                   onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--text-muted)';">
-                    Am plătit, mulțumesc! ✓
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    box-shadow: 0 4px 20px rgba(27, 67, 50, 0.35);
+                " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(27,67,50,0.45)';"
+                   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(27,67,50,0.35)';">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="2"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <path d="M6 12h.01M18 12h.01"/>
+                    </svg>
+                    Plătește cash
                 </button>
             </div>
         </div>
