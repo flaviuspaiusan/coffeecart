@@ -284,7 +284,8 @@ window.markOrderPaid = async function() {
         try {
             await SupabaseService.updateOrderPaid(currentOrderId, true)
         } catch (e) {
-            console.error('Error marking order paid:', e)
+            // Coloana 'paid' poate sa nu existe inca in Supabase - eroare silentioasa
+            console.warn('updateOrderPaid failed (coloana paid poate lipsi din Supabase):', e)
         }
     }
     closeRevolutModal()
@@ -429,7 +430,6 @@ checkoutForm.addEventListener('submit', async (e) => {
             customerName,
             timestamp: new Date().toISOString(),
             status: 'pending',
-            paid: false,
             eventId: currentActiveEventId || null
         }
 
