@@ -37,6 +37,15 @@ export const SupabaseService = {
         return data
     },
 
+    async updateOrderPaid(orderId, paid) {
+        const { data, error } = await supabase
+            .from('orders')
+            .update({ paid })
+            .eq('id', orderId)
+        if (error) throw error
+        return data
+    },
+
     async clearOrders(activeEventId) {
         if (activeEventId) {
             const { error } = await supabase

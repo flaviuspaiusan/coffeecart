@@ -275,6 +275,7 @@ function renderOrders(orders) {
         const date = new Date(order.timestamp)
         const timeStr = date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
         const isCompleted = order.status === 'completed'
+        const isPaid = order.paid === true
         const displayOrderNum = order.orderNumber ? `#${order.orderNumber} ` : ''
 
         let servedTimeStr = ''
@@ -284,19 +285,47 @@ function renderOrders(orders) {
             servedTimeStr = servedDate.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
         }
 
+        const paidBadge = isPaid
+            ? `<span style="
+                display: inline-flex; align-items: center; gap: 0.3rem;
+                background: rgba(46,125,50,0.12); color: #2e7d32;
+                border: 1px solid rgba(46,125,50,0.3);
+                border-radius: 20px; padding: 0.2rem 0.7rem;
+                font-size: 0.78rem; font-weight: 700; font-family: 'Inter', sans-serif;
+              ">&#10003; Achitat</span>`
+            : `<span style="
+                display: inline-flex; align-items: center; gap: 0.3rem;
+                background: rgba(229,62,62,0.10); color: #c53030;
+                border: 1px solid rgba(229,62,62,0.3);
+                border-radius: 20px; padding: 0.2rem 0.7rem;
+                font-size: 0.78rem; font-weight: 700; font-family: 'Inter', sans-serif;
+              ">&#10007; Neachitat</span>`
+
         const item = document.createElement('div')
         item.className = `order-item ${isCompleted ? 'completed' : ''}`
         item.innerHTML = `
             <div class="order-info">
                 <h3>${displayOrderNum}${order.itemName} <span class="badge ${isCompleted ? 'completed' : ''}">${isCompleted ? 'Finalizată' : 'În preparare'}</span></h3>
-                <p><strong>Client:</strong> ${order.customerName}</p>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin: 0.3rem 0;">
+                    <strong style="font-family: 'Inter', sans-serif; font-size: 0.9rem;">Client:</strong>
+                    <span>${order.customerName}</span>
+                    ${paidBadge}
+                </div>
                 <div class="order-meta">
                     Plasată la: ${timeStr} 
                     ${isCompleted && servedTimeStr ? `| Servită la: ${servedTimeStr}` : ''}
                 </div>
             </div>
-            <div>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end;">
                 ${!isCompleted ? `<button class="btn" onclick="markCompleted('${order.id}')" style="width: auto;">Gata de Servire</button>` : ''}
+                ${!isPaid ? `<button onclick="markPaid('${order.id}')" style="
+                    width: auto; padding: 0.4rem 0.9rem;
+                    background: rgba(46,125,50,0.1); color: #2e7d32;
+                    border: 1px solid rgba(46,125,50,0.4);
+                    border-radius: 8px; cursor: pointer;
+                    font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 700;
+                    transition: background 0.2s;
+                " onmouseover="this.style.background='rgba(46,125,50,0.2)'" onmouseout="this.style.background='rgba(46,125,50,0.1)'">Marchează achitat</button>` : ''}
             </div>
         `
         ordersList.appendChild(item)
@@ -309,6 +338,15 @@ window.markCompleted = async function(orderId) {
         await loadOrders()
     } catch (err) {
         console.error('Error marking completed:', err)
+    }
+}
+
+window.markPaid = async function(orderId) {
+    try {
+        await SupabaseService.updateOrderPaid(orderId, true)
+        await loadOrders()
+    } catch (err) {
+        console.error('Error marking paid:', err)
     }
 }
 

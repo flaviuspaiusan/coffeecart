@@ -2,7 +2,8 @@ import { SupabaseService } from './supabase.js'
 import { supabase } from './supabase.js'
 
 let currentMenu = []
-let activeEventId = null  // single source of truth — updated by loadSettings()
+let activeEventId = null     // single source of truth — updated by loadSettings()
+let currentOrderId = null    // ID-ul ultimei comenzi plasate (pentru marcare plata)
 
 const defaultMenuItems = [
     { id: 'espresso', name: 'Espresso', desc: '20/40 ml', image: 'assets/espresso_image_1778599544907.png' },
@@ -278,6 +279,17 @@ window.openRevolutModal = function(itemName, amount) {
     })
 }
 
+window.markOrderPaid = async function() {
+    if (currentOrderId) {
+        try {
+            await SupabaseService.updateOrderPaid(currentOrderId, true)
+        } catch (e) {
+            console.error('Error marking order paid:', e)
+        }
+    }
+    closeRevolutModal()
+}
+
 window.closeRevolutModal = function() {
     const overlay = document.getElementById('revolut-modal')
     if (!overlay) return
@@ -417,6 +429,7 @@ checkoutForm.addEventListener('submit', async (e) => {
             customerName,
             timestamp: new Date().toISOString(),
             status: 'pending',
+            paid: false,
             eventId: currentActiveEventId || null
         }
 
@@ -426,6 +439,7 @@ checkoutForm.addEventListener('submit', async (e) => {
         const priceAmount = getItemPriceNumeric(item, espressoType)
 
         await SupabaseService.createOrder(order)
+        currentOrderId = order.id
         localStorage.setItem('my_active_order_id', order.id)
 
         closeModal()
