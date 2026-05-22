@@ -36,10 +36,15 @@ async function init() {
 
         SupabaseService.subscribeToOrders(() => renderActiveOrder())
         SupabaseService.subscribeToMenu(() => loadMenu())
-        SupabaseService.subscribeToSettings(() => {
-            loadSettings()
-            loadPrices()
+        SupabaseService.subscribeToSettings(async () => {
+            await loadSettings()
+            await loadPrices()
         })
+
+        // Polling fallback: re-check every 5s in case Realtime misses the settings update
+        setInterval(async () => {
+            await loadSettings()
+        }, 5000)
     } catch (err) {
         console.error('Initialization error:', err)
     }
@@ -76,7 +81,8 @@ async function loadMenu() {
 async function loadSettings() {
     try {
         const activeEventId = await SupabaseService.getSetting('presso_active_event_id')
-        if (activeEventId) {
+        // Treat null, undefined AND empty string as "no active event"
+        if (activeEventId && activeEventId !== '') {
             localStorage.setItem('presso_active_event_id', activeEventId)
         } else {
             localStorage.removeItem('presso_active_event_id')
