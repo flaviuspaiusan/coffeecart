@@ -440,7 +440,12 @@ checkoutForm.addEventListener('submit', async (e) => {
 
         await SupabaseService.createOrder(order)
         currentOrderId = order.id
-        localStorage.setItem('my_active_order_id', order.id)
+
+        // Adauga comanda in array-ul de comenzi active
+        const myOrderIds = JSON.parse(localStorage.getItem('my_order_ids') || '[]')
+        myOrderIds.push(order.id)
+        localStorage.setItem('my_order_ids', JSON.stringify(myOrderIds))
+        localStorage.setItem('my_active_order_id', order.id) // backward compat
 
         closeModal()
         showToast(`Comanda #${orderNumber} pentru ${item.name} a fost trimisă!`)
@@ -460,71 +465,122 @@ btnCancel.addEventListener('click', closeModal)
 
 async function renderActiveOrder() {
     const hasScanAccess = window.location.search.includes('scan=presso2026')
-
     if (!hasScanAccess) {
         if (activeOrderBanner) activeOrderBanner.style.display = 'none'
         return
     }
 
-    const activeOrderId = localStorage.getItem('my_active_order_id')
-    if (!activeOrderId) {
+    // Suport multi-comenzi — migreaza de la format vechi daca e cazul
+    let myOrderIds = JSON.parse(localStorage.getItem('my_order_ids') || '[]')
+    const legacyId = localStorage.getItem('my_active_order_id')
+    if (legacyId && !myOrderIds.includes(legacyId)) {
+        myOrderIds.push(legacyId)
+        localStorage.setItem('my_order_ids', JSON.stringify(myOrderIds))
+    }
+
+    if (myOrderIds.length === 0) {
         if (activeOrderBanner) activeOrderBanner.style.display = 'none'
         return
     }
 
     try {
         const existingOrders = await SupabaseService.getOrders()
-        const myOrder = existingOrders.find(o => o.id === activeOrderId)
+        const myOrders = existingOrders.filter(o => myOrderIds.includes(o.id))
 
-        if (!myOrder) {
+        // Curata ID-urile care nu mai exista in DB
+        const validIds = myOrders.map(o => o.id)
+        const cleanedIds = myOrderIds.filter(id => validIds.includes(id))
+        if (cleanedIds.length !== myOrderIds.length) {
+            localStorage.setItem('my_order_ids', JSON.stringify(cleanedIds))
+        }
+
+        if (myOrders.length === 0) {
+            localStorage.removeItem('my_order_ids')
             localStorage.removeItem('my_active_order_id')
             if (activeOrderBanner) activeOrderBanner.style.display = 'none'
             return
         }
 
         if (activeOrderBanner) activeOrderBanner.style.display = 'flex'
+        activeOrderBanner.className = 'active-order-banner'
+        activeOrderBanner.style.flexDirection = 'column'
+        activeOrderBanner.style.gap = '0'
+        activeOrderBanner.style.padding = '0'
 
-        if (myOrder.status === 'completed') {
-            activeOrderBanner.className = 'active-order-banner ready'
-            activeOrderBanner.innerHTML = `
-                <div class="active-order-header">
-                    <span class="active-order-title">Comanda #${myOrder.orderNumber} este Gata! 🎉</span>
-                    <button class="btn btn-secondary" onclick="clearActiveOrder()" style="padding: 0.4rem 1rem; width: auto;">Închide</button>
-                </div>
-                <div class="active-order-details">Produs: <strong>${myOrder.itemName}</strong> | Nume: ${myOrder.customerName}</div>
-                <div class="queue-count" style="color: #2e7d32; border: 1px solid rgba(46, 125, 50, 0.3);">Te rugăm să o ridici. O zi frumoasă!</div>
-            `
-        } else {
-            // Filtreaza DOAR comenzile pending din evenimentul curent
-            const currentEvtId = myOrder.eventId
-            const pendingOrders = existingOrders.filter(o =>
-                o.status === 'pending' && o.eventId === currentEvtId
-            )
-            pendingOrders.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-            const myIndex = pendingOrders.findIndex(o => o.id === activeOrderId)
-            const ordersAhead = myIndex >= 0 ? myIndex : 0
+        // Sorteaza: completate ultimele, pending primele (dupa timestamp)
+        myOrders.sort((a, b) => {
+            if (a.status !== b.status) return a.status === 'completed' ? 1 : -1
+            return new Date(a.timestamp) - new Date(b.timestamp)
+        })
 
-            activeOrderBanner.className = 'active-order-banner'
-            activeOrderBanner.innerHTML = `
-                <div class="active-order-header">
-                    <span class="active-order-title">Comanda #${myOrder.orderNumber} (În preparare) ⏳</span>
-                </div>
-                <div class="active-order-details">Produs: <strong>${myOrder.itemName}</strong> | Nume: ${myOrder.customerName}</div>
-                <div class="queue-count">
-                    ${ordersAhead === 0
-                        ? 'Comanda ta este în preparare ☕'
-                        : `Comenzi înaintea ta: <strong>${ordersAhead}</strong>`
-                    }
-                </div>
-            `
-        }
+        // Calculeaza coada pentru evenimentul curent
+        const currentEvtId = myOrders[0].eventId
+        const pendingOrders = existingOrders.filter(o =>
+            o.status === 'pending' && o.eventId === currentEvtId
+        ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+
+        let html = ''
+        myOrders.forEach((order, idx) => {
+            const isLast = idx === myOrders.length - 1
+            const borderBottom = isLast ? '' : 'border-bottom: 1px solid var(--glass-border);'
+
+            if (order.status === 'completed') {
+                html += `
+                    <div style="padding: 1.2rem 1.5rem; ${borderBottom} background: rgba(46,125,50,0.04); animation: slideIn 0.3s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                            <span style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: #2e7d32;">
+                                Comanda #${order.orderNumber} este Gata! 🎉
+                            </span>
+                            <button class="btn btn-secondary" onclick="clearSingleOrder('${order.id}')" style="padding: 0.3rem 0.8rem; width: auto; font-size: 0.85rem;">Închide</button>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.4rem;">
+                            <strong>${order.itemName}</strong> &middot; ${order.customerName}
+                        </div>
+                        <span class="queue-count" style="color: #2e7d32; border-color: rgba(46,125,50,0.3); margin-top: 0.3rem;">
+                            Te rugăm să o ridici ☕
+                        </span>
+                    </div>
+                `
+            } else {
+                const myIndex = pendingOrders.findIndex(o => o.id === order.id)
+                const ordersAhead = myIndex >= 0 ? myIndex : 0
+                html += `
+                    <div style="padding: 1.2rem 1.5rem; ${borderBottom} animation: slideIn 0.3s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                            <span style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--primary-brown);">
+                                Comanda #${order.orderNumber} ⏳
+                            </span>
+                            <span style="font-size: 0.78rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">În preparare</span>
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.4rem;">
+                            <strong>${order.itemName}</strong> &middot; ${order.customerName}
+                        </div>
+                        <span class="queue-count" style="margin-top: 0.3rem;">
+                            ${ordersAhead === 0
+                                ? 'Comanda ta este în preparare ☕'
+                                : `Comenzi înaintea ta: <strong>${ordersAhead}</strong>`
+                            }
+                        </span>
+                    </div>
+                `
+            }
+        })
+
+        activeOrderBanner.innerHTML = html
     } catch (err) {
         console.error('Error rendering active order:', err)
     }
 }
 
-window.clearActiveOrder = function() {
-    localStorage.removeItem('my_active_order_id')
+window.clearSingleOrder = function(orderId) {
+    let myOrderIds = JSON.parse(localStorage.getItem('my_order_ids') || '[]')
+    myOrderIds = myOrderIds.filter(id => id !== orderId)
+    localStorage.setItem('my_order_ids', JSON.stringify(myOrderIds))
+    if (myOrderIds.length === 0) {
+        localStorage.removeItem('my_active_order_id')
+    } else {
+        localStorage.setItem('my_active_order_id', myOrderIds[myOrderIds.length - 1])
+    }
     renderActiveOrder()
 }
 
