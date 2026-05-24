@@ -495,7 +495,11 @@ async function renderActiveOrder() {
                 <div class="queue-count" style="color: #2e7d32; border: 1px solid rgba(46, 125, 50, 0.3);">Te rugăm să o ridici. O zi frumoasă!</div>
             `
         } else {
-            const pendingOrders = existingOrders.filter(o => o.status === 'pending')
+            // Filtreaza DOAR comenzile pending din evenimentul curent
+            const currentEvtId = myOrder.eventId
+            const pendingOrders = existingOrders.filter(o =>
+                o.status === 'pending' && o.eventId === currentEvtId
+            )
             pendingOrders.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
             const myIndex = pendingOrders.findIndex(o => o.id === activeOrderId)
             const ordersAhead = myIndex >= 0 ? myIndex : 0
@@ -507,7 +511,10 @@ async function renderActiveOrder() {
                 </div>
                 <div class="active-order-details">Produs: <strong>${myOrder.itemName}</strong> | Nume: ${myOrder.customerName}</div>
                 <div class="queue-count">
-                    ${ordersAhead === 0 ? 'Comanda ta este următoarea!' : `Comenzi înaintea ta: <strong>${ordersAhead}</strong>`}
+                    ${ordersAhead === 0
+                        ? 'Comanda ta este în preparare ☕'
+                        : `Comenzi înaintea ta: <strong>${ordersAhead}</strong>`
+                    }
                 </div>
             `
         }
