@@ -20,6 +20,39 @@ const defaultMenuItems = [
     { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: 'assets/tropical_cold_brew_image_1778599721744.png' }
 ]
 
+const notifiedOrdersKey = 'my_notified_order_ids'
+
+window.playReadySound = function() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext
+        if (!AudioContext) return
+        const ctx = new AudioContext()
+        
+        const playTone = (freq1, freq2, startTime) => {
+            const osc = ctx.createOscillator()
+            const gain = ctx.createGain()
+            osc.type = 'sine'
+            osc.frequency.setValueAtTime(freq1, startTime)
+            osc.frequency.exponentialRampToValueAtTime(freq2, startTime + 0.1)
+            
+            gain.gain.setValueAtTime(0, startTime)
+            gain.gain.linearRampToValueAtTime(0.5, startTime + 0.05)
+            gain.gain.exponentialRampToValueAtTime(0.01, startTime + 1.0)
+            
+            osc.connect(gain)
+            gain.connect(ctx.destination)
+            osc.start(startTime)
+            osc.stop(startTime + 1.1)
+        }
+        
+        // Ding - Dong chime
+        playTone(523.25, 1046.50, ctx.currentTime)       // C5 to C6
+        playTone(659.25, 1318.51, ctx.currentTime + 0.15) // E5 to E6
+    } catch(e) {
+        console.error("Audio play failed", e)
+    }
+}
+
 const menuGrid = document.getElementById('menu-grid')
 const modal = document.getElementById('checkout-modal')
 const btnCancel = document.getElementById('btn-cancel')
@@ -547,11 +580,20 @@ async function renderActiveOrder() {
         ).sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
 
         let html = ''
+        let notifiedIds = JSON.parse(localStorage.getItem(notifiedOrdersKey) || '[]')
+        let shouldSaveNotified = false
+
         myOrders.forEach((order, idx) => {
             const isLast = idx === myOrders.length - 1
             const borderBottom = isLast ? '' : 'border-bottom: 1px solid var(--glass-border);'
 
             if (order.status === 'completed') {
+                if (!notifiedIds.includes(order.id)) {
+                    playReadySound()
+                    notifiedIds.push(order.id)
+                    shouldSaveNotified = true
+                }
+
                 html += `
                     <div style="padding: 1.2rem 1.5rem; ${borderBottom} background: rgba(46,125,50,0.04); animation: slideIn 0.3s ease;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
@@ -592,6 +634,10 @@ async function renderActiveOrder() {
                 `
             }
         })
+
+        if (shouldSaveNotified) {
+            localStorage.setItem(notifiedOrdersKey, JSON.stringify(notifiedIds))
+        }
 
         activeOrderBanner.innerHTML = html
     } catch (err) {
