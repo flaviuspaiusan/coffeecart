@@ -72,6 +72,37 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="order-quantity">Cantitate</label>
+                    <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; background: var(--bg-color); width: fit-content;">
+                        <button type="button" onclick="changeQty(-1)" style="
+                            width: 44px; height: 50px; border: none; background: transparent;
+                            font-size: 1.4rem; font-weight: 300; color: var(--text-main);
+                            cursor: pointer; display: flex; align-items: center; justify-content: center;
+                            transition: background 0.15s;
+                        " onmouseover="this.style.background='var(--glass-border)'" onmouseout="this.style.background='transparent'">&#8722;</button>
+                        <input type="number" id="order-quantity" value="1" min="1" max="20"
+                            style="
+                                width: 60px; height: 50px; border: none;
+                                border-left: 1px solid var(--glass-border);
+                                border-right: 1px solid var(--glass-border);
+                                background: var(--bg-color); color: var(--text-main);
+                                font-size: 1.1rem; font-weight: 700;
+                                font-family: 'Inter', sans-serif;
+                                text-align: center; padding: 0;
+                                -moz-appearance: textfield;
+                            "
+                            oninput="if(this.value<1)this.value=1; if(this.value>20)this.value=20;"
+                        >
+                        <button type="button" onclick="changeQty(1)" style="
+                            width: 44px; height: 50px; border: none; background: transparent;
+                            font-size: 1.4rem; font-weight: 300; color: var(--text-main);
+                            cursor: pointer; display: flex; align-items: center; justify-content: center;
+                            transition: background 0.15s;
+                        " onmouseover="this.style.background='var(--glass-border)'" onmouseout="this.style.background='transparent'">&#43;</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="customer-name">Numele Tău</label>
                     <input type="text" id="customer-name" required placeholder="ex: Andrei" autocomplete="off">
                 </div>

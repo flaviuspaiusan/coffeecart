@@ -291,6 +291,13 @@ window.markOrderPaid = async function() {
     closeRevolutModal()
 }
 
+window.changeQty = function(delta) {
+    const input = document.getElementById('order-quantity')
+    if (!input) return
+    const newVal = Math.max(1, Math.min(20, (parseInt(input.value) || 1) + delta))
+    input.value = newVal
+}
+
 window.closeRevolutModal = function() {
     const overlay = document.getElementById('revolut-modal')
     if (!overlay) return
@@ -365,6 +372,9 @@ window.openModal = function(itemId) {
     }
 
     modal.classList.add('active')
+    // Reseteaza cantitatea la 1 la fiecare deschidere
+    const qtyInput = document.getElementById('order-quantity')
+    if (qtyInput) qtyInput.value = 1
     document.getElementById('customer-name').focus()
 
     const confirmBtn = document.getElementById('btn-confirm-order')
@@ -405,6 +415,7 @@ checkoutForm.addEventListener('submit', async (e) => {
     const itemId = document.getElementById('item-id').value
     const item = currentMenu.find(i => i.id === itemId)
     const customerName = document.getElementById('customer-name').value
+    const quantity = Math.max(1, parseInt(document.getElementById('order-quantity')?.value) || 1)
 
     let finalItemName = item.name
     if (itemId === 'espresso') {
@@ -414,6 +425,9 @@ checkoutForm.addEventListener('submit', async (e) => {
 
     const aromaCheckbox = document.getElementById('aroma-caramel')
     if (aromaCheckbox && aromaCheckbox.checked) finalItemName += ` + ${aromaCheckbox.value}`
+
+    // Prefix cu cantitatea daca > 1
+    if (quantity > 1) finalItemName = `${quantity}x ${finalItemName}`
 
     try {
         const currentActiveEventId = activeEventId  // use module variable
@@ -433,10 +447,11 @@ checkoutForm.addEventListener('submit', async (e) => {
             eventId: currentActiveEventId || null
         }
 
-        // Determine the numeric price for the payment modal
+        // Determine the numeric price for the payment modal (inmultit cu cantitate)
         const espressoTypeEl = document.querySelector('input[name="espresso-type"]:checked')
         const espressoType = espressoTypeEl ? espressoTypeEl.value : 'Single'
-        const priceAmount = getItemPriceNumeric(item, espressoType)
+        const unitPrice = getItemPriceNumeric(item, espressoType)
+        const priceAmount = unitPrice !== null ? unitPrice * quantity : null
 
         await SupabaseService.createOrder(order)
         currentOrderId = order.id
