@@ -69,6 +69,11 @@ window.playReadySound = function() {
         // Ding - Dong chime
         playTone(523.25, 1046.50, ctx.currentTime)       // C5 to C6
         playTone(659.25, 1318.51, ctx.currentTime + 0.15) // E5 to E6
+        
+        // Vibrate if supported (Android mostly)
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200, 100, 400]) // scurt, pauza, scurt, pauza, lung
+        }
     } catch(e) {
         console.error("Audio play failed", e)
     }
