@@ -69,15 +69,27 @@ function propagateScanParam() {
 
 async function loadMenu() {
     try {
-        currentMenu = await SupabaseService.getMenuItems()
-        if (!currentMenu || currentMenu.length === 0) {
-            currentMenu = defaultMenuItems
+        let items = await SupabaseService.getMenuItems()
+        if (!items || items.length === 0) {
+            items = defaultMenuItems
         }
+
+        // Filtreaza produsele out of stock
+        try {
+            const raw = await SupabaseService.getSetting('presso_out_of_stock')
+            if (raw) {
+                const oosIds = typeof raw === 'string' ? JSON.parse(raw) : raw
+                items = items.filter(i => !oosIds.includes(i.id))
+            }
+        } catch(e) { /* ignora erori OOS */ }
+
+        currentMenu = items
         renderMenu()
     } catch (err) {
         console.error('Error loading menu:', err)
         currentMenu = defaultMenuItems
         renderMenu()
+
     }
 }
 

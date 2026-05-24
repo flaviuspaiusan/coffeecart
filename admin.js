@@ -20,6 +20,7 @@ const defaultMenuItems = [
 
 let currentMenuAdmin = []
 let activeEvent = null
+let outOfStockIds = []  // ID-urile produselor indisponibile
 
 async function initAdmin() {
     try {
@@ -372,6 +373,18 @@ async function loadMenu() {
         currentMenuAdmin = await SupabaseService.getMenuItems()
         if (!currentMenuAdmin || currentMenuAdmin.length === 0) currentMenuAdmin = defaultMenuItems
 
+        // Incarca lista out of stock din Supabase
+        try {
+            const raw = await SupabaseService.getSetting('presso_out_of_stock')
+            if (raw) {
+                outOfStockIds = typeof raw === 'string' ? JSON.parse(raw) : raw
+            } else {
+                outOfStockIds = []
+            }
+        } catch(e) {
+            outOfStockIds = []
+        }
+
         const list = document.getElementById('admin-menu-list')
         if (!list) return
         list.innerHTML = ''
@@ -399,18 +412,39 @@ async function loadMenu() {
         currentMenuAdmin.sort((a, b) => getSortValue(a) - getSortValue(b))
 
         currentMenuAdmin.forEach(item => {
+            const isOOS = outOfStockIds.includes(item.id)
             const card = document.createElement('div')
             card.className = 'card'
+            card.style.opacity = isOOS ? '0.55' : '1'
+            card.style.position = 'relative'
             card.innerHTML = `
+                ${isOOS ? `<div style="
+                    position: absolute; top: 10px; left: 10px; z-index: 2;
+                    background: #c53030; color: white;
+                    font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 800;
+                    padding: 0.25rem 0.65rem; border-radius: 20px;
+                    letter-spacing: 0.05em; text-transform: uppercase;
+                ">Out of Stock</div>` : ''}
                 <div class="card-image-container">
                     <img src="${item.image}" class="card-image">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">${item.name}</h3>
                     <p class="card-desc">${item.desc}</p>
-                    <div style="display: flex; gap: 0.5rem; margin-top: auto;">
-                        <button class="btn" onclick="editMenuItem('${item.id}')" style="flex: 1; padding: 0.5rem; font-size: 0.9rem;">Editează</button>
-                        <button class="btn btn-secondary" onclick="deleteMenuItem('${item.id}')" style="flex: 1; padding: 0.5rem; font-size: 0.9rem;">Șterge</button>
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: auto;">
+                        <button onclick="toggleOutOfStock('${item.id}')" style="
+                            width: 100%; padding: 0.5rem; font-size: 0.88rem;
+                            font-family: 'Inter', sans-serif; font-weight: 700;
+                            border-radius: 8px; border: none; cursor: pointer;
+                            transition: background 0.2s;
+                            background: ${isOOS ? 'rgba(46,125,50,0.12)' : 'rgba(197,48,48,0.10)'};
+                            color: ${isOOS ? '#2e7d32' : '#c53030'};
+                            border: 1px solid ${isOOS ? 'rgba(46,125,50,0.3)' : 'rgba(197,48,48,0.3)'};
+                        ">${isOOS ? '✓ Adaugă înapoi' : '⦻ Out of Stock'}</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" onclick="editMenuItem('${item.id}')" style="flex: 1; padding: 0.5rem; font-size: 0.9rem;">Editează</button>
+                            <button class="btn btn-secondary" onclick="deleteMenuItem('${item.id}')" style="flex: 1; padding: 0.5rem; font-size: 0.9rem;">Șterge</button>
+                        </div>
                     </div>
                 </div>
             `
@@ -419,6 +453,20 @@ async function loadMenu() {
     } catch (err) {
         console.error('Error loading menu:', err)
     }
+}
+
+window.toggleOutOfStock = async function(itemId) {
+    if (outOfStockIds.includes(itemId)) {
+        outOfStockIds = outOfStockIds.filter(id => id !== itemId)
+    } else {
+        outOfStockIds.push(itemId)
+    }
+    try {
+        await SupabaseService.setSetting('presso_out_of_stock', JSON.stringify(outOfStockIds))
+    } catch(e) {
+        console.error('Error saving out of stock list:', e)
+    }
+    await loadMenu()  // Re-render cu starea noua
 }
 
 window.switchTab = function(tabId) {
