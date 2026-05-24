@@ -22,11 +22,32 @@ const defaultMenuItems = [
 
 const notifiedOrdersKey = 'my_notified_order_ids'
 
+let globalAudioCtx = null
+function unlockAudio() {
+    if (!globalAudioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext
+        if (AudioContext) globalAudioCtx = new AudioContext()
+    }
+    if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
+        globalAudioCtx.resume()
+    }
+}
+// Unlock on first interaction
+document.addEventListener('click', unlockAudio, { passive: true })
+document.addEventListener('touchstart', unlockAudio, { passive: true })
+
 window.playReadySound = function() {
     try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext
-        if (!AudioContext) return
-        const ctx = new AudioContext()
+        if (!globalAudioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext
+            if (AudioContext) globalAudioCtx = new AudioContext()
+        }
+        if (!globalAudioCtx) return
+        
+        // Ensure it's active
+        if (globalAudioCtx.state === 'suspended') globalAudioCtx.resume()
+
+        const ctx = globalAudioCtx
         
         const playTone = (freq1, freq2, startTime) => {
             const osc = ctx.createOscillator()
