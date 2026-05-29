@@ -131,6 +131,12 @@ async function loadMenu() {
         let items = await SupabaseService.getMenuItems()
         if (!items || items.length === 0) {
             items = defaultMenuItems
+        } else {
+            // Asigură-te că Tiramisu apare chiar dacă a fost șters din DB
+            if (!items.some(i => i.id === 'tiramisu_latte' || (i.name && i.name.toLowerCase().includes('tiramisu')))) {
+                const t = defaultMenuItems.find(i => i.id === 'tiramisu_latte')
+                if (t) items.push(t)
+            }
         }
 
         // Filtreaza produsele out of stock

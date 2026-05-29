@@ -370,9 +370,18 @@ window.clearOrders = async function() {
 // --- Menu Management ---
 async function loadMenu() {
     try {
-        currentMenuAdmin = await SupabaseService.getMenuItems()
-        if (!currentMenuAdmin || currentMenuAdmin.length === 0) currentMenuAdmin = defaultMenuItems
-
+        let items = await SupabaseService.getMenuItems()
+        if (!items || items.length === 0) {
+            items = defaultMenuItems
+        } else {
+            // Asigură-te că Tiramisu apare chiar dacă a fost șters din DB
+            if (!items.some(i => i.id === 'tiramisu_latte' || (i.name && i.name.toLowerCase().includes('tiramisu')))) {
+                const t = defaultMenuItems.find(i => i.id === 'tiramisu_latte')
+                if (t) items.push(t)
+            }
+        }
+        
+        currentMenuAdmin = items
         // Incarca lista out of stock din Supabase
         try {
             const raw = await SupabaseService.getSetting('presso_out_of_stock')
