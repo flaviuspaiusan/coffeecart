@@ -336,6 +336,11 @@ function getItemPriceNumeric(item, espressoType) {
     return null
 }
 
+window.reopenPayment = function(id, itemName, amount) {
+    currentOrderId = id
+    openRevolutModal(itemName, amount)
+}
+
 window.openRevolutModal = function(itemName, amount) {
     const overlay = document.getElementById('revolut-modal')
     if (!overlay) return
@@ -523,16 +528,6 @@ checkoutForm.addEventListener('submit', async (e) => {
         const eventOrders = existingOrders.filter(o => o.eventId === currentActiveEventId)
         const orderNumber = eventOrders.length > 0 ? Math.max(...eventOrders.map(o => o.orderNumber || 0)) + 1 : 1
 
-        const order = {
-            id: 'ord_' + Date.now(),
-            orderNumber,
-            itemName: finalItemName,
-            customerName,
-            timestamp: new Date().toISOString(),
-            status: 'pending',
-            eventId: currentActiveEventId || null
-        }
-
         // Determine the numeric price for the payment modal (inmultit cu cantitate)
         const espressoTypeEl = document.querySelector('input[name="espresso-type"]:checked')
         const espressoType = espressoTypeEl ? espressoTypeEl.value : 'Single'
@@ -544,6 +539,17 @@ checkoutForm.addEventListener('submit', async (e) => {
             if (aromaV && aromaV.checked) unitPrice += 1
         }
         const priceAmount = unitPrice !== null ? unitPrice * quantity : null
+
+        const order = {
+            id: 'ord_' + Date.now(),
+            orderNumber,
+            itemName: finalItemName,
+            customerName,
+            timestamp: new Date().toISOString(),
+            status: 'pending',
+            eventId: currentActiveEventId || null,
+            price: priceAmount
+        }
 
         await SupabaseService.createOrder(order)
         currentOrderId = order.id
@@ -660,13 +666,21 @@ async function renderActiveOrder() {
             } else {
                 const myIndex = pendingOrders.findIndex(o => o.id === order.id)
                 const ordersAhead = myIndex >= 0 ? myIndex : 0
+                const isPaid = order.paid === true
+                const payButtonHtml = (!isPaid && order.price) 
+                    ? `<button class="btn btn-secondary" onclick="reopenPayment('${order.id}', '${order.itemName.replace(/'/g, "\\'")}', ${order.price})" style="padding: 0.3rem 0.8rem; width: auto; font-size: 0.85rem; border: 1px solid var(--primary-green); color: var(--primary-green); background: transparent; margin-right: 0.5rem;">Refă plata</button>`
+                    : ''
+
                 html += `
                     <div style="padding: 1.2rem 1.5rem; ${borderBottom} animation: slideIn 0.3s ease;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
                             <span style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--primary-brown);">
                                 Comanda #${order.orderNumber} ⏳
                             </span>
-                            <span style="font-size: 0.78rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">În preparare</span>
+                            <div style="display: flex; align-items: center;">
+                                ${payButtonHtml}
+                                <span style="font-size: 0.78rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">În preparare</span>
+                            </div>
                         </div>
                         <div style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.4rem;">
                             <strong>${order.itemName}</strong> &middot; ${order.customerName}
