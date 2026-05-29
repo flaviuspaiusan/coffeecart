@@ -337,7 +337,7 @@
                 </button>
 
                 <!-- Confirm payment button — apare doar dupa ce clientul apasa Revolut -->
-                <button id="revolut-confirm-btn" onclick="markOrderPaid()" style="
+                <button id="revolut-confirm-btn" onclick="closeRevolutModal()" style="
                     display: none;
                     align-items: center;
                     justify-content: center;
@@ -355,7 +355,7 @@
                     transition: background 0.2s, color 0.2s;
                 " onmouseover="this.style.background='var(--primary-green)';this.style.color='white';"
                    onmouseout="this.style.background='transparent';this.style.color='var(--primary-green)';">
-                    ✓ Am plătit, mulțumesc!
+                    Am transferat banii
                 </button>
             </div>
         </div>

@@ -350,17 +350,7 @@ window.openRevolutModal = function(itemName, amount) {
     })
 }
 
-window.markOrderPaid = async function() {
-    if (currentOrderId) {
-        try {
-            await SupabaseService.updateOrderPaid(currentOrderId, true)
-        } catch (e) {
-            // Coloana 'paid' poate sa nu existe inca in Supabase - eroare silentioasa
-            console.warn('updateOrderPaid failed (coloana paid poate lipsi din Supabase):', e)
-        }
-    }
-    closeRevolutModal()
-}
+// markOrderPaid was removed because clients shouldn't self-certify payments
 
 window.changeQty = function(delta) {
     const input = document.getElementById('order-quantity')
