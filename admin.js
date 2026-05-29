@@ -394,7 +394,7 @@ async function loadMenu() {
             const nameLower = item.name ? item.name.toLowerCase() : ''
             const idLower = item.id ? item.id.toLowerCase() : ''
             
-            if (idLower === 'iced_coffee') return 0
+            if (idLower === 'iced_coffee' || nameLower === 'iced coffee' || nameLower === 'iced coffeee') return 0
             if (idLower === 'espresso' || nameLower === 'espresso') return 1
             if (idLower === 'presso' || nameLower === 'presso') return 2
             if (idLower === 'cortado' || nameLower === 'cortado') return 3
