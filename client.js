@@ -271,7 +271,7 @@ function renderMenu() {
             </div>
             <div class="card-content">
                 <h3 class="card-title">${item.name}</h3>
-                ${priceText ? `<p class="card-price">${priceText}</p>` : ''}
+                ${(priceText && hasScanAccess) ? `<p class="card-price">${priceText}</p>` : ''}
                 <p class="card-desc">${item.desc}</p>
                 ${canOrder ? `<button class="btn" onclick="openModal('${item.id}')">Comandă</button>` : ''}
             </div>
