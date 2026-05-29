@@ -417,20 +417,31 @@ window.openModal = function(itemId) {
         const basePrice = getItemPrice(item)
         const espressoSingle = dbPrices['espresso'] ? (dbPrices['espresso'].single || '9') : '9'
         const espressoDouble = dbPrices['espresso'] ? (dbPrices['espresso'].double || '10') : '10'
-        modalPrice.textContent = isEspresso ? `${espressoSingle} lei` : basePrice
+        
+        const updateLivePrice = () => {
+            let currentStr = isEspresso ? (document.querySelector('input[name="espresso-type"]:checked')?.value === 'Double' ? espressoDouble : espressoSingle) : basePrice
+            let baseVal = parseFloat(currentStr) || 0
+            if (document.getElementById('aroma-caramel')?.checked) baseVal += 1
+            if (document.getElementById('aroma-vanilie')?.checked) baseVal += 1
+            modalPrice.textContent = `${baseVal} lei`
+        }
+
         modalPrice.style.display = basePrice ? 'block' : 'none'
 
         if (isEspresso) {
-            // Update price live when Single/Double changes
             document.querySelectorAll('input[name="espresso-type"]').forEach(radio => {
-                radio.onchange = () => {
-                    modalPrice.textContent = radio.value === 'Double' ? `${espressoDouble} lei` : `${espressoSingle} lei`
-                }
+                radio.onchange = updateLivePrice
             })
-            // Reset to Single price
             const singleRadio = document.querySelector('input[name="espresso-type"][value="Single"]')
             if (singleRadio) singleRadio.checked = true
         }
+        
+        const aromaC = document.getElementById('aroma-caramel')
+        if (aromaC) aromaC.onchange = updateLivePrice
+        const aromaV = document.getElementById('aroma-vanilie')
+        if (aromaV) aromaV.onchange = updateLivePrice
+
+        updateLivePrice()
     }
 
     const aromaKeywords = ['cappuccino', 'cappucino', 'latte', 'flat', 'iced coffee', 'iced coffeee', 'iced_coffee']
@@ -441,6 +452,8 @@ window.openModal = function(itemId) {
         aromaOptions.style.display = isAromaEligible ? 'block' : 'none'
         const aromaCheckbox = document.getElementById('aroma-caramel')
         if (aromaCheckbox) aromaCheckbox.checked = false
+        const aromaVanilie = document.getElementById('aroma-vanilie')
+        if (aromaVanilie) aromaVanilie.checked = false
     }
 
     modal.classList.add('active')
@@ -496,7 +509,9 @@ checkoutForm.addEventListener('submit', async (e) => {
     }
 
     const aromaCheckbox = document.getElementById('aroma-caramel')
+    const aromaVanilie = document.getElementById('aroma-vanilie')
     if (aromaCheckbox && aromaCheckbox.checked) finalItemName += ` + ${aromaCheckbox.value}`
+    if (aromaVanilie && aromaVanilie.checked) finalItemName += ` + ${aromaVanilie.value}`
 
     // Prefix cu cantitatea daca > 1
     if (quantity > 1) finalItemName = `${quantity}x ${finalItemName}`
@@ -522,7 +537,13 @@ checkoutForm.addEventListener('submit', async (e) => {
         // Determine the numeric price for the payment modal (inmultit cu cantitate)
         const espressoTypeEl = document.querySelector('input[name="espresso-type"]:checked')
         const espressoType = espressoTypeEl ? espressoTypeEl.value : 'Single'
-        const unitPrice = getItemPriceNumeric(item, espressoType)
+        let unitPrice = getItemPriceNumeric(item, espressoType)
+        if (unitPrice !== null) {
+            const aromaC = document.getElementById('aroma-caramel')
+            const aromaV = document.getElementById('aroma-vanilie')
+            if (aromaC && aromaC.checked) unitPrice += 1
+            if (aromaV && aromaV.checked) unitPrice += 1
+        }
         const priceAmount = unitPrice !== null ? unitPrice * quantity : null
 
         await SupabaseService.createOrder(order)
