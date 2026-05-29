@@ -674,7 +674,10 @@ async function renderActiveOrder() {
                 const isPaid = order.paid === true
                 const orderPriceLocal = pricesMap[order.id]
                 const payButtonHtml = (!isPaid && orderPriceLocal) 
-                    ? `<button class="btn btn-secondary" onclick="reopenPayment('${order.id}', '${order.itemName.replace(/'/g, "\\'")}', ${orderPriceLocal})" style="padding: 0.3rem 0.8rem; width: auto; font-size: 0.85rem; border: 1px solid var(--primary-green); color: var(--primary-green); background: transparent; margin-right: 0.5rem;">Refă plata</button>`
+                    ? `<button class="btn btn-secondary" onclick="reopenPayment('${order.id}', '${order.itemName.replace(/'/g, "\\'")}', ${orderPriceLocal})" style="margin-top: 0.85rem; width: 100%; padding: 0.75rem; font-size: 0.95rem; border: 1px solid var(--primary-green); border-radius: 8px; color: var(--primary-green); background: rgba(93,122,78,0.05); display: flex; align-items: center; justify-content: center; gap: 0.4rem; cursor: pointer; transition: background 0.2s;">
+                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                           Plătește cash sau Revolut
+                       </button>`
                     : ''
 
                 html += `
@@ -683,20 +686,18 @@ async function renderActiveOrder() {
                             <span style="font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--primary-brown);">
                                 Comanda #${order.orderNumber} ⏳
                             </span>
-                            <div style="display: flex; align-items: center;">
-                                ${payButtonHtml}
-                                <span style="font-size: 0.78rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">În preparare</span>
-                            </div>
+                            <span style="font-size: 0.78rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">În preparare</span>
                         </div>
                         <div style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.4rem;">
                             <strong>${order.itemName}</strong> &middot; ${order.customerName}
                         </div>
-                        <span class="queue-count" style="margin-top: 0.3rem;">
+                        <span class="queue-count" style="margin-top: 0.3rem; display: block;">
                             ${ordersAhead === 0
                                 ? 'Comanda ta este în preparare ☕'
                                 : `Comenzi înaintea ta: <strong>${ordersAhead}</strong>`
                             }
                         </span>
+                        ${payButtonHtml}
                     </div>
                 `
             }
