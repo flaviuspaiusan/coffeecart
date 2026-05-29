@@ -547,9 +547,13 @@ checkoutForm.addEventListener('submit', async (e) => {
             customerName,
             timestamp: new Date().toISOString(),
             status: 'pending',
-            eventId: currentActiveEventId || null,
-            price: priceAmount
+            eventId: currentActiveEventId || null
         }
+        
+        // Save price locally so it doesn't break Supabase schema
+        const pricesMap = JSON.parse(localStorage.getItem('my_order_prices') || '{}')
+        pricesMap[order.id] = priceAmount
+        localStorage.setItem('my_order_prices', JSON.stringify(pricesMap))
 
         await SupabaseService.createOrder(order)
         currentOrderId = order.id
@@ -635,6 +639,7 @@ async function renderActiveOrder() {
         let html = ''
         let notifiedIds = JSON.parse(localStorage.getItem(notifiedOrdersKey) || '[]')
         let shouldSaveNotified = false
+        const pricesMap = JSON.parse(localStorage.getItem('my_order_prices') || '{}')
 
         myOrders.forEach((order, idx) => {
             const isLast = idx === myOrders.length - 1
@@ -667,8 +672,9 @@ async function renderActiveOrder() {
                 const myIndex = pendingOrders.findIndex(o => o.id === order.id)
                 const ordersAhead = myIndex >= 0 ? myIndex : 0
                 const isPaid = order.paid === true
-                const payButtonHtml = (!isPaid && order.price) 
-                    ? `<button class="btn btn-secondary" onclick="reopenPayment('${order.id}', '${order.itemName.replace(/'/g, "\\'")}', ${order.price})" style="padding: 0.3rem 0.8rem; width: auto; font-size: 0.85rem; border: 1px solid var(--primary-green); color: var(--primary-green); background: transparent; margin-right: 0.5rem;">Refă plata</button>`
+                const orderPriceLocal = pricesMap[order.id]
+                const payButtonHtml = (!isPaid && orderPriceLocal) 
+                    ? `<button class="btn btn-secondary" onclick="reopenPayment('${order.id}', '${order.itemName.replace(/'/g, "\\'")}', ${orderPriceLocal})" style="padding: 0.3rem 0.8rem; width: auto; font-size: 0.85rem; border: 1px solid var(--primary-green); color: var(--primary-green); background: transparent; margin-right: 0.5rem;">Refă plata</button>`
                     : ''
 
                 html += `
