@@ -290,8 +290,7 @@ function getItemPrice(item) {
 
     if (id === 'espresso' || name === 'espresso') {
         const s = dbEntry ? (dbEntry.single || '9') : '9'
-        const d = dbEntry ? (dbEntry.double || '10') : '10'
-        return `${s} lei (Single) · ${d} lei (Double)`
+        return `${s} lei`
     }
     const p = (key) => dbPrices[key] ? dbPrices[key].price : null
     if (id === 'presso' || name === 'presso') return `${p('presso') || '13'} lei`
