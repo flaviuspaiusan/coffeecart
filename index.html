@@ -336,6 +336,36 @@
                     Plătește cash
                 </button>
 
+                <!-- Retry payment button -->
+                <a id="revolut-retry-btn" href="https://revolut.me/pressocart" target="_blank" rel="noopener"
+                   onclick="document.getElementById('revolut-confirm-btn').style.display='flex';"
+                   style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
+                    width: 100%;
+                    padding: 1rem 1.5rem;
+                    background: transparent;
+                    color: var(--primary-green);
+                    border: 2px solid var(--primary-green);
+                    border-radius: 12px;
+                    text-decoration: none;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    cursor: pointer;
+                    margin-bottom: 0.85rem;
+                    transition: background 0.2s, color 0.2s;
+                " onmouseover="this.style.background='var(--primary-green)';this.style.color='white';"
+                   onmouseout="this.style.background='transparent';this.style.color='var(--primary-green)';">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2v6h-6"></path>
+                        <path d="M3 12a9 9 0 1 0 2-5.5L2 9"></path>
+                    </svg>
+                    Reîncearcă plata
+                </a>
+
                 <!-- Confirm payment button — apare doar dupa ce clientul apasa Revolut -->
                 <button id="revolut-confirm-btn" onclick="markOrderPaid()" style="
                     display: none;

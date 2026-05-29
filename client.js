@@ -347,6 +347,12 @@ window.openRevolutModal = function(itemName, amount) {
     document.getElementById('revolut-item-name').textContent = itemName
     document.getElementById('revolut-amount').textContent = amount
     document.getElementById('revolut-amount-hint').textContent = amount
+    
+    const payBtn = document.getElementById('revolut-pay-btn')
+    if (payBtn) payBtn.href = `https://revolut.me/pressocart/${amount}`
+    
+    const retryBtn = document.getElementById('revolut-retry-btn')
+    if (retryBtn) retryBtn.href = `https://revolut.me/pressocart/${amount}`
     overlay.style.display = 'flex'
     // Trigger animation on next frame
     requestAnimationFrame(() => {
@@ -671,15 +677,6 @@ async function renderActiveOrder() {
             } else {
                 const myIndex = pendingOrders.findIndex(o => o.id === order.id)
                 const ordersAhead = myIndex >= 0 ? myIndex : 0
-                const isPaid = order.paid === true
-                const orderPriceLocal = pricesMap[order.id]
-                const payButtonHtml = (!isPaid && orderPriceLocal) 
-                    ? `<button class="btn btn-secondary" onclick="reopenPayment('${order.id}', '${order.itemName.replace(/'/g, "\\'")}', ${orderPriceLocal})" style="margin-top: 0.85rem; width: 100%; padding: 0.75rem; font-size: 0.95rem; border: 1px solid var(--primary-green); border-radius: 8px; color: var(--primary-green); background: rgba(93,122,78,0.05); display: flex; align-items: center; justify-content: center; gap: 0.4rem; cursor: pointer; transition: background 0.2s;">
-                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-                           Plătește cash sau Revolut
-                       </button>`
-                    : ''
-
                 html += `
                     <div style="padding: 1.2rem 1.5rem; ${borderBottom} animation: slideIn 0.3s ease;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
@@ -691,13 +688,12 @@ async function renderActiveOrder() {
                         <div style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.4rem;">
                             <strong>${order.itemName}</strong> &middot; ${order.customerName}
                         </div>
-                        <span class="queue-count" style="margin-top: 0.3rem; display: block;">
+                        <span class="queue-count" style="margin-top: 0.3rem;">
                             ${ordersAhead === 0
                                 ? 'Comanda ta este în preparare ☕'
                                 : `Comenzi înaintea ta: <strong>${ordersAhead}</strong>`
                             }
                         </span>
-                        ${payButtonHtml}
                     </div>
                 `
             }
