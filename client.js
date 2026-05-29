@@ -347,12 +347,6 @@ window.openRevolutModal = function(itemName, amount) {
     document.getElementById('revolut-item-name').textContent = itemName
     document.getElementById('revolut-amount').textContent = amount
     document.getElementById('revolut-amount-hint').textContent = amount
-    
-    const payBtn = document.getElementById('revolut-pay-btn')
-    if (payBtn) payBtn.href = `https://revolut.me/pressocart/${amount}`
-    
-    const retryBtn = document.getElementById('revolut-retry-btn')
-    if (retryBtn) retryBtn.href = `https://revolut.me/pressocart/${amount}`
     overlay.style.display = 'flex'
     // Trigger animation on next frame
     requestAnimationFrame(() => {
