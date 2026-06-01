@@ -271,6 +271,8 @@ header p {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
+    overflow-y: auto;
+    padding: 1.5rem;
 }
 
 .modal-overlay.active {
@@ -285,6 +287,7 @@ header p {
     border-radius: var(--card-radius);
     width: 90%;
     max-width: 420px;
+    margin: auto;
     transform: translateY(20px);
     transition: transform 0.3s ease;
     box-shadow: 0 20px 40px rgba(93, 122, 78, 0.12);
