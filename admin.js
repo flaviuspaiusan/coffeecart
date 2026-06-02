@@ -217,6 +217,70 @@ window.viewEventOrders = async function(eventId, eventName) {
             })
         }
 
+        const summaryContainer = document.getElementById('event-orders-summary')
+        if (summaryContainer) {
+            if (orders.length === 0) {
+                summaryContainer.style.display = 'none'
+            } else {
+                summaryContainer.style.display = 'block'
+                
+                let totalOrders = orders.length
+                let totalCups = 0
+                const drinksMap = {}
+                
+                orders.forEach(order => {
+                    const itemName = order.itemName || ""
+                    const match = itemName.match(/^(\d+)x\s+(.+)$/i)
+                    let quantity = 1
+                    let baseName = itemName
+                    if (match) {
+                        quantity = parseInt(match[1], 10)
+                        baseName = match[2]
+                    }
+                    totalCups += quantity
+                    drinksMap[baseName] = (drinksMap[baseName] || 0) + quantity
+                })
+                
+                const drinksList = Object.entries(drinksMap).map(([name, count]) => ({ name, count }))
+                drinksList.sort((a, b) => b.count - a.count)
+                
+                let drinksHtml = ''
+                drinksList.forEach(drink => {
+                    const percentage = totalCups > 0 ? Math.round((drink.count / totalCups) * 100) : 0
+                    drinksHtml += `
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;">
+                                <span style="font-weight: 600; color: var(--text-main);">${drink.name}</span>
+                                <span style="font-weight: 700; color: var(--primary-green);">${drink.count} ${drink.count === 1 ? 'pahar' : 'pahare'}</span>
+                            </div>
+                            <div style="width: 100%; height: 8px; background: var(--bg-color); border-radius: 4px; overflow: hidden; border: 1px solid var(--glass-border);">
+                                <div style="width: ${percentage}%; height: 100%; background: var(--primary-green); border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    `
+                })
+                
+                summaryContainer.innerHTML = `
+                    <h3 style="font-family: 'Inter', sans-serif; font-size: 1.15rem; color: var(--primary-green); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">📊 Sumar Preferințe Comenzi</h3>
+                    
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 120px; background: rgba(93, 122, 78, 0.05); border: 1px solid var(--glass-border); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                            <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; font-family: 'Inter', sans-serif;">Total Comenzi</p>
+                            <strong style="font-size: 1.5rem; color: var(--primary-green); font-family: 'Inter', sans-serif;">${totalOrders}</strong>
+                        </div>
+                        <div style="flex: 1; min-width: 120px; background: rgba(93, 122, 78, 0.05); border: 1px solid var(--glass-border); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                            <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; font-family: 'Inter', sans-serif;">Total Pahare</p>
+                            <strong style="font-size: 1.5rem; color: var(--primary-green); font-family: 'Inter', sans-serif;">${totalCups}</strong>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; font-family: 'Inter', sans-serif;">
+                        ${drinksHtml}
+                    </div>
+                `
+            }
+        }
+
         document.getElementById('event-details-modal').classList.add('active')
     } catch (err) {
         console.error('Error fetching event orders:', err)
