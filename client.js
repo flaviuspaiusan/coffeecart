@@ -5,19 +5,30 @@ let currentMenu = []
 let activeEventId = null     // single source of truth — updated by loadSettings()
 let currentOrderId = null    // ID-ul ultimei comenzi plasate (pentru marcare plata)
 
+function getImageUrl(imagePath) {
+    if (!imagePath) return ''
+    if (imagePath.startsWith('data:') || imagePath.startsWith('http:') || imagePath.startsWith('https:')) {
+        return imagePath
+    }
+    if (imagePath.startsWith('/')) {
+        return imagePath
+    }
+    return '/' + imagePath
+}
+
 const defaultMenuItems = [
-    { id: 'espresso', name: 'Espresso', desc: '20/40 ml', image: 'assets/espresso_image_1778599544907.png' },
-    { id: 'presso', name: 'Presso', desc: 'Băutură semnătură', image: 'assets/espresso_image_1778599544907.png' },
-    { id: 'cortado', name: 'Cortado', desc: '80 ml (1 shot espresso + crema lapte)', image: 'assets/cortado_image_1778599592329.png' },
-    { id: 'americano', name: 'Americano', desc: '100 ml (1 shot espresso + apa fierbinte)', image: 'assets/americano_image_1778599576520.png' },
-    { id: 'cappuccino', name: 'Cappuccino', desc: '180 ml (1 shot espresso + crema lapte)', image: 'assets/cappuccino_image_1778599606617.png' },
-    { id: 'flat_white', name: 'Flat White', desc: '180 ml (2 shot-uri espresso + crema lapte)', image: 'assets/flat_white_image_1778599620528.png' },
-    { id: 'latte_macchiato', name: 'Latte Macchiato', desc: '250 ml (1 shot espresso + crema lapte)', image: 'assets/latte_macchiato_image_1778599636109.png' },
-    { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: 'assets/iced_coffee_image_1778599653110.png' },
-    { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: 'assets/pistachio_latte_image_1778599667717.png' },
-    { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: 'assets/tiramisu_latte_image_1778599682616.png' },
-    { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: 'assets/cold_brew_tonic_image_1778599699004.png' },
-    { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: 'assets/tropical_cold_brew_image_1778599721744.png' }
+    { id: 'espresso', name: 'Espresso', desc: '20/40 ml', image: '/assets/espresso_image_1778599544907.png' },
+    { id: 'presso', name: 'Presso', desc: 'Băutură semnătură', image: '/assets/espresso_image_1778599544907.png' },
+    { id: 'cortado', name: 'Cortado', desc: '80 ml (1 shot espresso + crema lapte)', image: '/assets/cortado_image_1778599592329.png' },
+    { id: 'americano', name: 'Americano', desc: '100 ml (1 shot espresso + apa fierbinte)', image: '/assets/americano_image_1778599576520.png' },
+    { id: 'cappuccino', name: 'Cappuccino', desc: '180 ml (1 shot espresso + crema lapte)', image: '/assets/cappuccino_image_1778599606617.png' },
+    { id: 'flat_white', name: 'Flat White', desc: '180 ml (2 shot-uri espresso + crema lapte)', image: '/assets/flat_white_image_1778599620528.png' },
+    { id: 'latte_macchiato', name: 'Latte Macchiato', desc: '250 ml (1 shot espresso + crema lapte)', image: '/assets/latte_macchiato_image_1778599636109.png' },
+    { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: '/assets/iced_coffee_image_1778599653110.png' },
+    { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.png' },
+    { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.png' },
+    { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.png' },
+    { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.png' }
 ]
 
 const notifiedOrdersKey = 'my_notified_order_ids'
@@ -273,7 +284,7 @@ function renderMenu() {
         
         card.innerHTML = `
             <div class="card-image-container" ${imageClickAttr}>
-                <img src="${item.image}" alt="${item.name}" class="card-image" ${item.id === 'pistachio_latte' ? 'style="object-position: center 85%;"' : ''}>
+                <img src="${getImageUrl(item.image)}" alt="${item.name}" class="card-image" ${item.id === 'pistachio_latte' ? 'style="object-position: center 85%;"' : ''}>
             </div>
             <div class="card-content">
                 <h3 class="card-title">${item.name}</h3>
@@ -409,7 +420,7 @@ window.openModal = function(itemId) {
     document.getElementById('item-id').value = item.id
     const modalImg = document.getElementById('modal-image')
     if (modalImg) {
-        modalImg.src = item.image
+        modalImg.src = getImageUrl(item.image)
         modalImg.style.objectPosition = item.id === 'pistachio_latte' ? 'center 85%' : 'center'
     }
 
