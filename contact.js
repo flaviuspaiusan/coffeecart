@@ -6,8 +6,7 @@ const CONTACT = {
     phoneHref: 'tel:+40748151407',
     email: 'flavius.paiusan@yahoo.com',
     instagramName: 'Presso Coffee Cart',
-    // TODO: confirmă username-ul exact de Instagram
-    instagramUrl: 'https://www.instagram.com/presso.coffeecart/',
+    instagramUrl: 'https://www.instagram.com/presso.coffee.cart/',
 };
 
 const ICONS = {
