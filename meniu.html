@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presso - Comandă Online</title>
+    <meta name="description" content="Comandă cafeaua preferată online din meniul nostru variat.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/assets/logo.jpeg" alt="Presso Coffee Cart" class="header-logo">
+            </a>
+            <nav class="header-nav">
+                <a href="/" class="nav-link">Acasă</a>
+                <a href="meniu.html" class="nav-link active">Meniu Cafea</a>
+                <a href="oferta.html" class="nav-link">Vreau cafea la evenimentul meu</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-offset" id="main-content">
+        <div id="active-order-banner" class="active-order-banner" style="display: none;">
+            <!-- Active order details injected by JS -->
+        </div>
+
+        <div id="unauthorized-banner" style="display: none; padding: 1.5rem; background: rgba(93, 122, 78, 0.05); border: 1px dashed var(--primary-green); border-radius: var(--card-radius); margin-bottom: 2rem; text-align: center; font-family: 'Inter', sans-serif;">
+            <p style="font-weight: 700; color: var(--primary-green); margin-bottom: 0.3rem; font-size: 1.05rem;">Meniu în mod vizualizare 👁️</p>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!</p>
+        </div>
+
+        <div class="menu-grid" id="menu-grid">
+            <!-- Items injected by JS -->
+        </div>
+    </main>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-content">
+            <div style="width: 100%; height: 240px; overflow: hidden; border-radius: 8px; margin-bottom: 1.5rem; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                <img id="modal-image" src="" alt="Imagine Produs" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+            </div>
+            <h2 id="modal-title" style="margin-bottom: 0.4rem;">Finalizare Comandă</h2>
+            <p id="modal-price" style="display:none; font-size: 1.15rem; font-weight: 700; color: var(--primary-brown); margin-bottom: 0.5rem;"></p>
+            <p id="modal-item-desc" style="color: var(--text-muted); margin-bottom: 1.5rem;"></p>
+            
+            <form id="checkout-form">
+                <input type="hidden" id="item-id">
+                
+                <div class="form-group" id="espresso-options" style="display: none;">
+                    <label>Tip Espresso</label>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
+                            <input type="radio" name="espresso-type" value="Single" checked style="width: auto; padding: 0;"> Single
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
+                            <input type="radio" name="espresso-type" value="Double" style="width: auto; padding: 0;"> Double
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="aroma-options" style="display: none;">
+                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block; font-family: 'Inter', sans-serif;">Adaugă aromă</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
+                            <span style="font-size: 1.3rem; line-height: 1;">+</span>
+                            <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Caramel Sărat (+1 leu)</span>
+                            <input type="checkbox" id="aroma-caramel" name="aroma-type" value="Caramel Sărat" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
+                            <span style="font-size: 1.3rem; line-height: 1;">+</span>
+                            <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Vanilie (+1 leu)</span>
+                            <input type="checkbox" id="aroma-vanilie" name="aroma-type" value="Vanilie" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="order-quantity">Cantitate</label>
+                    <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; background: var(--bg-color); width: fit-content;">
+                        <button type="button" onclick="changeQty(-1)" style="
+                            width: 44px; height: 50px; border: none; background: transparent;
+                            font-size: 1.4rem; font-weight: 300; color: var(--text-main);
+                            cursor: pointer; display: flex; align-items: center; justify-content: center;
+                            transition: background 0.15s;
+                        " onmouseover="this.style.background='var(--glass-border)'" onmouseout="this.style.background='transparent'">&#8722;</button>
+                        <input type="number" id="order-quantity" value="1" min="1" max="20"
+                            style="
+                                width: 60px; height: 50px; border: none;
+                                border-left: 1px solid var(--glass-border);
+                                border-right: 1px solid var(--glass-border);
+                                background: var(--bg-color); color: var(--text-main);
+                                font-size: 1.1rem; font-weight: 700;
+                                font-family: 'Inter', sans-serif;
+                                text-align: center; padding: 0;
+                                -moz-appearance: textfield;
+                            "
+                            oninput="if(this.value<1)this.value=1; if(this.value>20)this.value=20;"
+                        >
+                        <button type="button" onclick="changeQty(1)" style="
+                            width: 44px; height: 50px; border: none; background: transparent;
+                            font-size: 1.4rem; font-weight: 300; color: var(--text-main);
+                            cursor: pointer; display: flex; align-items: center; justify-content: center;
+                            transition: background 0.15s;
+                        " onmouseover="this.style.background='var(--glass-border)'" onmouseout="this.style.background='transparent'">&#43;</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="customer-name">Numele Tău</label>
+                    <input type="text" id="customer-name" required placeholder="ex: Andrei" autocomplete="off">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel">Anulează</button>
+                    <button type="submit" class="btn" id="btn-confirm-order">Confirmă Comanda</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Revolut Payment Modal -->
+    <div class="modal-overlay" id="revolut-modal" style="display:none; opacity:0; pointer-events:none; transition: opacity 0.3s ease;">
+        <div class="modal-content" id="revolut-modal-content" style="
+            max-width: 420px;
+            border-radius: 24px;
+            padding: 0;
+            overflow: hidden;
+            background: var(--bg-color);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.18);
+        ">
+            <!-- Header gradient banner -->
+            <div style="
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+                padding: 2rem 2rem 1.5rem;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="
+                    position: absolute; inset: 0;
+                    background: radial-gradient(ellipse at 30% 50%, rgba(93,122,78,0.25) 0%, transparent 65%);
+                    pointer-events: none;
+                "></div>
+                <div style="
+                    width: 60px; height: 60px;
+                    background: rgba(255,255,255,0.08);
+                    border-radius: 50%;
+                    display: flex; align-items: center; justify-content: center;
+                    margin: 0 auto 1rem;
+                    border: 1px solid rgba(255,255,255,0.12);
+                    position: relative; z-index: 1;
+                ">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>
+                </div>
+                <p style="
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    letter-spacing: 0.18em;
+                    text-transform: uppercase;
+                    color: rgba(255,255,255,0.55);
+                    margin-bottom: 0.4rem;
+                    position: relative; z-index: 1;
+                ">Plată comandă</p>
+                <p id="revolut-item-name" style="
+                    font-family: 'Playfair Display', serif;
+                    font-size: 1.3rem;
+                    color: white;
+                    font-weight: 600;
+                    position: relative; z-index: 1;
+                    margin: 0;
+                ">—</p>
+            </div>
+
+            <!-- Amount display -->
+            <div style="
+                padding: 2rem 2rem 1rem;
+                text-align: center;
+                border-bottom: 1px solid var(--glass-border);
+            ">
+                <p style="
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.8rem;
+                    color: var(--text-muted);
+                    text-transform: uppercase;
+                    letter-spacing: 0.12em;
+                    margin-bottom: 0.5rem;
+                ">De plătit</p>
+                <div style="display: flex; align-items: baseline; justify-content: center; gap: 0.4rem;">
+                    <span id="revolut-amount" style="
+                        font-family: 'Playfair Display', serif;
+                        font-size: 3.6rem;
+                        font-weight: 700;
+                        color: var(--primary-green);
+                        line-height: 1;
+                    ">—</span>
+                    <span style="
+                        font-family: 'Inter', sans-serif;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        color: var(--text-muted);
+                    ">lei</span>
+                </div>
+                <p style="
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.82rem;
+                    color: var(--text-muted);
+                    margin-top: 0.6rem;
+                ">Introdu această sumă în aplicația Revolut</p>
+            </div>
+
+            <!-- Instructions + button -->
+            <div style="padding: 1.5rem 2rem 2rem;">
+                <!-- Step hints -->
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.6rem;
+                    margin-bottom: 1.5rem;
+                ">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="
+                            width: 26px; height: 26px; min-width: 26px;
+                            background: var(--primary-green);
+                            border-radius: 50%;
+                            display: flex; align-items: center; justify-content: center;
+                            font-family: 'Inter', sans-serif;
+                            font-size: 0.72rem;
+                            font-weight: 700;
+                            color: white;
+                        ">1</div>
+                        <p style="font-family: 'Inter', sans-serif; font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+                            Apasă butonul <strong style="color: var(--text-main);">Plătește pe Revolut</strong>
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="
+                            width: 26px; height: 26px; min-width: 26px;
+                            background: var(--primary-green);
+                            border-radius: 50%;
+                            display: flex; align-items: center; justify-content: center;
+                            font-family: 'Inter', sans-serif;
+                            font-size: 0.72rem;
+                            font-weight: 700;
+                            color: white;
+                        ">2</div>
+                        <p style="font-family: 'Inter', sans-serif; font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+                            Introdu suma de <strong id="revolut-amount-hint" style="color: var(--primary-green);">—</strong> lei în Revolut
+                        </p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="
+                            width: 26px; height: 26px; min-width: 26px;
+                            background: var(--primary-green);
+                            border-radius: 50%;
+                            display: flex; align-items: center; justify-content: center;
+                            font-family: 'Inter', sans-serif;
+                            font-size: 0.72rem;
+                            font-weight: 700;
+                            color: white;
+                        ">3</div>
+                        <p style="font-family: 'Inter', sans-serif; font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+                            Confirmă plata și revino să îți ridici cafeaua ☕
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Revolut button -->
+                <a id="revolut-pay-btn" href="https://revolut.me/pressocart" target="_blank" rel="noopener"
+                   onclick="document.getElementById('revolut-confirm-btn').style.display='flex';"
+                   style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
+                    width: 100%;
+                    padding: 1rem 1.5rem;
+                    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+                    color: white;
+                    border-radius: 12px;
+                    text-decoration: none;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    letter-spacing: 0.02em;
+                    border: none;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    box-shadow: 0 4px 20px rgba(15, 52, 96, 0.35);
+                    margin-bottom: 0.85rem;
+                " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(15,52,96,0.45)';"
+                   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(15,52,96,0.35)';">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    Plătește pe Revolut
+                </a>
+
+                <!-- Cash button -->
+                <button onclick="closeRevolutModal()" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
+                    width: 100%;
+                    padding: 1rem 1.5rem;
+                    background: linear-gradient(135deg, #2d6a4f, #1b4332);
+                    color: white;
+                    border-radius: 12px;
+                    border: none;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    letter-spacing: 0.02em;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    box-shadow: 0 4px 20px rgba(27, 67, 50, 0.35);
+                    margin-bottom: 0.85rem;
+                " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(27,67,50,0.45)';"
+                   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(27,67,50,0.35)';">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="2"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <path d="M6 12h.01M18 12h.01"/>
+                    </svg>
+                    Plătește cash
+                </button>
+
+                <!-- Confirm payment button — apare doar dupa ce clientul apasa Revolut -->
+                <button id="revolut-confirm-btn" onclick="markOrderPaid()" style="
+                    display: none;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.6rem;
+                    width: 100%;
+                    padding: 0.85rem 1.5rem;
+                    background: transparent;
+                    border: 2px solid var(--primary-green);
+                    border-radius: 12px;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    color: var(--primary-green);
+                    cursor: pointer;
+                    transition: background 0.2s, color 0.2s;
+                " onmouseover="this.style.background='var(--primary-green)';this.style.color='white';"
+                   onmouseout="this.style.background='transparent';this.style.color='var(--primary-green)';">
+                    ✓ Am plătit, mulțumesc!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="client.js"></script>
+    <script>
+        const header = document.querySelector('header');
+        const main = document.getElementById('main-content');
+        function initHeader() {
+            const h = header.offsetHeight;
+            main.style.paddingTop = h + 'px';
+        }
+        initHeader();
+        window.addEventListener('resize', initHeader);
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const nav = header.querySelector('nav');
+            const maxTranslate = nav ? nav.offsetTop - 16 : header.offsetHeight;
+            header.style.transform = `translateY(-${Math.min(scrollY, maxTranslate)}px)`;
+        });
+    </script>
+</body>
+</html>

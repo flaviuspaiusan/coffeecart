@@ -1,9 +1,19 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "query", "key": "scan" }],
+      "destination": "/meniu",
+      "permanent": false
+    },
+    { "source": "/acasa", "destination": "/", "permanent": true },
+    { "source": "/acasa.html", "destination": "/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/meniu", "destination": "/index.html" },
+    { "source": "/meniu", "destination": "/meniu.html" },
     { "source": "/oferta", "destination": "/oferta.html" }
   ]
 }
