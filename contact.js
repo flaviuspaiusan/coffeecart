@@ -4,7 +4,7 @@
 const CONTACT = {
     phoneDisplay: '0748 151 407',
     phoneHref: 'tel:+40748151407',
-    email: 'flavius.paiusan@yahoo.com',
+    email: 'pressocoffeecart@yahoo.com',
     instagramName: 'Presso Coffee Cart',
     instagramUrl: 'https://www.instagram.com/presso.coffee.cart/',
 };
