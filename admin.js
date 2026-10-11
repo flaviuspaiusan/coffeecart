@@ -25,8 +25,8 @@ const defaultMenuItems = [
     { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: '/assets/iced_coffee_image_1778599653110.png' },
     { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.png' },
     { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.png' },
-    { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte', desc: '380 ml', image: '/assets/pumpkin_spice_latte.webp' },
-    { id: 'ube_latte', name: 'Ube latte', desc: '380 ml', image: '/assets/ube_latte.webp' },
+    { id: 'pumpkin_spice_latte', name: 'Pumpkin Spice Latte', desc: '380 ml', image: '/assets/pumpkin_spice_latte.webp' },
+    { id: 'ube_latte', name: 'Ube Latte', desc: '380 ml', image: '/assets/ube_latte.webp' },
     { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.png' },
     { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.png' }
 ]
@@ -468,7 +468,7 @@ async function ensurePumpkinInDatabase() {
             }
             await SupabaseService.saveMenuItem({
                 id: 'pumpkin_spice_latte',
-                name: 'Pumpkin spice latte',
+                name: 'Pumpkin Spice Latte',
                 desc: '380 ml',
                 image: imgData
             })
@@ -786,8 +786,8 @@ const DEFAULT_PRICES = [
     { id: 'iced_coffee',       name: 'Iced Coffee',                   priceDisplay: '15' },
     { id: 'pistachio_latte',   name: 'Pistachio Strawberry Iced Latte', priceDisplay: '17' },
     { id: 'tiramisu_latte',    name: 'Tiramisu Iced Latte',           priceDisplay: '17' },
-    { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte',         priceDisplay: '17' },
-    { id: 'ube_latte',         name: 'Ube latte',                     priceDisplay: '17' },
+    { id: 'pumpkin_spice_latte', name: 'Pumpkin Spice Latte',         priceDisplay: '17' },
+    { id: 'ube_latte',         name: 'Ube Latte',                     priceDisplay: '17' },
     { id: 'cold_brew_tonic',   name: 'Cold Brew Tonic',               priceDisplay: '16' },
     { id: 'tropical_cold_brew',name: 'Tropical Cold Brew',            priceDisplay: '16' },
 ]
