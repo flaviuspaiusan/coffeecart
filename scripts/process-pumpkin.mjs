@@ -2,7 +2,7 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
-const srcPath = 'C:/Users/Flavius/.gemini/antigravity/brain/d65b281c-25c2-44c7-8acc-3073eb6732f0/media__1791746493912.jpg';
+const srcPath = 'C:/Users/Flavius/.gemini/antigravity/brain/d65b281c-25c2-44c7-8acc-3073eb6732f0/media__1791748288149.jpg';
 const destDir = 'C:/Users/Flavius/.gemini/antigravity/scratch/coffee-app/public/assets';
 
 if (!fs.existsSync(destDir)) {
