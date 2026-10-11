@@ -26,6 +26,7 @@ const defaultMenuItems = [
     { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.png' },
     { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.png' },
     { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte', desc: '380 ml', image: '/assets/pumpkin_spice_latte.webp' },
+    { id: 'ube_latte', name: 'Ube latte', desc: '380 ml', image: '/assets/ube_latte.webp' },
     { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.png' },
     { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.png' }
 ]
@@ -493,6 +494,11 @@ async function loadMenu() {
                 const p = defaultMenuItems.find(i => i.id === 'pumpkin_spice_latte')
                 if (p) items.push(p)
             }
+            // Asigură-te că Ube Latte apare chiar dacă nu e în DB
+            if (!items.some(i => i.id === 'ube_latte' || (i.name && i.name.toLowerCase().includes('ube')))) {
+                const u = defaultMenuItems.find(i => i.id === 'ube_latte')
+                if (u) items.push(u)
+            }
         }
         
         // Sincronizează Pumpkin spice latte în baza de date Supabase dacă lipsește
@@ -527,13 +533,14 @@ async function loadMenu() {
             if (idLower === 'americano' || nameLower === 'americano') return 4
             if (idLower.includes('cappuccino') || nameLower.includes('cappuccino') || idLower.includes('cappucino') || nameLower.includes('cappucino')) return 5
             if (idLower.includes('flat') || nameLower.includes('flat')) return 6
-            if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !nameLower.includes('pumpkin') && !idLower.includes('pistachio') && !idLower.includes('tiramisu') && !idLower.includes('pumpkin'))) return 7
+            if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !nameLower.includes('pumpkin') && !nameLower.includes('ube') && !idLower.includes('pistachio') && !idLower.includes('tiramisu') && !idLower.includes('pumpkin') && !idLower.includes('ube'))) return 7
             if (idLower.includes('iced_coffee') || nameLower.includes('iced coffee') || idLower.includes('iced coffeee') || nameLower.includes('iced coffeee')) return 8
             if (idLower.includes('pistachio') || nameLower.includes('pistachio')) return 9
             if (idLower.includes('tiramisu') || nameLower.includes('tiramisu')) return 10
             if (idLower.includes('cold_brew_tonic') || nameLower.includes('cold brew tonic')) return 11
             if (idLower.includes('tropical') || nameLower.includes('tropical')) return 12
             if (idLower.includes('pumpkin') || nameLower.includes('pumpkin')) return 13
+            if (idLower.includes('ube') || nameLower.includes('ube')) return 14
             return 99
         }
 
@@ -780,6 +787,7 @@ const DEFAULT_PRICES = [
     { id: 'pistachio_latte',   name: 'Pistachio Strawberry Iced Latte', priceDisplay: '17' },
     { id: 'tiramisu_latte',    name: 'Tiramisu Iced Latte',           priceDisplay: '17' },
     { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte',         priceDisplay: '17' },
+    { id: 'ube_latte',         name: 'Ube latte',                     priceDisplay: '17' },
     { id: 'cold_brew_tonic',   name: 'Cold Brew Tonic',               priceDisplay: '16' },
     { id: 'tropical_cold_brew',name: 'Tropical Cold Brew',            priceDisplay: '16' },
 ]
