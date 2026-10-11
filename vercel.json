@@ -1,6 +1,8 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "redirects": [
     {
       "source": "/",
@@ -8,12 +10,44 @@
       "destination": "/meniu",
       "permanent": false
     },
-    { "source": "/acasa", "destination": "/", "permanent": true },
-    { "source": "/acasa.html", "destination": "/", "permanent": true }
+    { "source": "/acasa", "destination": "/", "statusCode": 301 },
+    { "source": "/acasa.html", "destination": "/", "statusCode": 301 },
+    { "source": "/index.html", "destination": "/", "statusCode": 301 },
+    { "source": "/meniu.html", "destination": "/meniu", "statusCode": 301 },
+    { "source": "/oferta.html", "destination": "/oferta", "statusCode": 301 },
+    { "source": "/admin.html", "destination": "/admin", "statusCode": 301 }
   ],
-  "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/meniu", "destination": "/meniu.html" },
-    { "source": "/oferta", "destination": "/oferta.html" }
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)\\.(js|css)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/assets/(.*)\\.(jpg|jpeg|png|webp|avif|svg)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=86400" }]
+    },
+    {
+      "source": "/fonts/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/og/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    }
   ]
 }

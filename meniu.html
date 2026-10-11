@@ -3,26 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presso - Comandă Online</title>
-    <meta name="description" content="Comandă cafeaua preferată online din meniul nostru variat.">
+    <title>Meniu Cafea de Specialitate Evenimente | Presso Coffee Cart</title>
+    <meta name="description" content="Descoperă meniul Presso Coffee Cart: espresso, cappuccino, flat white, latte și opțiuni artizanale preparate live de barista la evenimentul tău în Timișoara și România.">
+    <link rel="canonical" href="%SITE_URL%/meniu">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#5d7a4e">
+
+    <!-- Iconițe și manifest -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Presso Coffee Cart">
+    <meta property="og:locale" content="ro_RO">
+    <meta property="og:url" content="%SITE_URL%/meniu">
+    <meta property="og:title" content="Meniu Cafea de Specialitate Evenimente | Presso Coffee Cart">
+    <meta property="og:description" content="Descoperă meniul Presso Coffee Cart: espresso, cappuccino, flat white, latte și opțiuni artizanale preparate live de barista la evenimentul tău în Timișoara și România.">
+    <meta property="og:image" content="%SITE_URL%/og/og-meniu.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Meniu cafea de specialitate Presso Coffee Cart">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Meniu Cafea de Specialitate Evenimente | Presso Coffee Cart">
+    <meta name="twitter:description" content="Descoperă meniul Presso Coffee Cart: espresso, cappuccino, flat white, latte și opțiuni artizanale preparate live de barista la evenimentul tău în Timișoara și România.">
+    <meta name="twitter:image" content="%SITE_URL%/og/og-meniu.jpg">
+
+    <!-- Fonturi self-hosted -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/playfair-display-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+    <!-- Date structurate (JSON-LD): BreadcrumbList și WebPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "@id": "%SITE_URL%/meniu#breadcrumbs",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Acasă",
+                        "item": "%SITE_URL%/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Meniu Cafea",
+                        "item": "%SITE_URL%/meniu"
+                    }
+                ]
+            },
+            {
+                "@type": "WebPage",
+                "@id": "%SITE_URL%/meniu#webpage",
+                "url": "%SITE_URL%/meniu",
+                "name": "Meniu Cafea de Specialitate Evenimente | Presso Coffee Cart",
+                "description": "Descoperă meniul complet de băuturi pe bază de cafea de specialitate servite live la nunți, evenimente corporate și petreceri private de către Presso Coffee Cart.",
+                "isPartOf": { "@id": "%SITE_URL%/#website" },
+                "breadcrumb": { "@id": "%SITE_URL%/meniu#breadcrumbs" },
+                "inLanguage": "ro-RO"
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Sari la conținut</a>
+
     <header>
         <div class="header-container">
             <a href="/" style="display: flex; align-items: center; text-decoration: none;">
-                <img src="/assets/logo.jpeg" alt="Presso Coffee Cart" class="header-logo">
+                <img src="/assets/img/presso-coffee-cart-logo-110.webp" srcset="/assets/img/presso-coffee-cart-logo-110.webp 1x, /assets/img/presso-coffee-cart-logo-220.webp 2x" alt="Presso Coffee Cart" class="header-logo" width="55" height="55" fetchpriority="high">
             </a>
-            <nav class="header-nav">
+            <nav class="header-nav" aria-label="Navigare principală">
                 <a href="/" class="nav-link">Acasă</a>
-                <a href="meniu.html" class="nav-link active">Meniu Cafea</a>
-                <a href="oferta.html" class="nav-link">Vreau cafea la evenimentul meu</a>
+                <a href="/meniu" class="nav-link active">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link">Vreau cafea la evenimentul meu</a>
             </nav>
         </div>
     </header>
 
     <main class="container main-offset" id="main-content">
+        <h1 style="text-align: center; margin-bottom: 2rem; color: var(--text-main); font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 2.8rem);">Meniu Cafea de Specialitate</h1>
+
         <div id="active-order-banner" class="active-order-banner" style="display: none;">
             <!-- Active order details injected by JS -->
         </div>
@@ -38,7 +107,7 @@
     </main>
 
     <!-- Checkout Modal -->
-    <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-overlay" id="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
             <div style="width: 100%; height: 240px; overflow: hidden; border-radius: 8px; margin-bottom: 1.5rem; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
                 <img id="modal-image" src="" alt="Imagine Produs" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
@@ -51,37 +120,41 @@
                 <input type="hidden" id="item-id">
                 
                 <div class="form-group" id="espresso-options" style="display: none;">
-                    <label>Tip Espresso</label>
-                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
-                            <input type="radio" name="espresso-type" value="Single" checked style="width: auto; padding: 0;"> Single
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
-                            <input type="radio" name="espresso-type" value="Double" style="width: auto; padding: 0;"> Double
-                        </label>
-                    </div>
+                    <fieldset style="border: none; padding: 0; margin: 0;">
+                        <legend style="font-weight: 600; margin-bottom: 0.5rem; display: block; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--text-main);">Tip Espresso</legend>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
+                                <input type="radio" name="espresso-type" value="Single" checked style="width: auto; padding: 0;"> Single
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-main); font-weight: normal;">
+                                <input type="radio" name="espresso-type" value="Double" style="width: auto; padding: 0;"> Double
+                            </label>
+                        </div>
+                    </fieldset>
                 </div>
 
                 <div class="form-group" id="aroma-options" style="display: none;">
-                    <label style="font-weight: 600; margin-bottom: 0.75rem; display: block; font-family: 'Inter', sans-serif;">Adaugă aromă</label>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
-                            <span style="font-size: 1.3rem; line-height: 1;">+</span>
-                            <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Caramel Sărat (+1 leu)</span>
-                            <input type="checkbox" id="aroma-caramel" name="aroma-type" value="Caramel Sărat" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
-                            <span style="font-size: 1.3rem; line-height: 1;">+</span>
-                            <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Vanilie (+1 leu)</span>
-                            <input type="checkbox" id="aroma-vanilie" name="aroma-type" value="Vanilie" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
-                        </label>
-                    </div>
+                    <fieldset style="border: none; padding: 0; margin: 0;">
+                        <legend style="font-weight: 600; margin-bottom: 0.75rem; display: block; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--text-main);">Adaugă aromă</legend>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
+                                <span style="font-size: 1.3rem; line-height: 1;">+</span>
+                                <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Caramel Sărat (+1 leu)</span>
+                                <input type="checkbox" id="aroma-caramel" name="aroma-type" value="Caramel Sărat" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); transition: border-color 0.2s;">
+                                <span style="font-size: 1.3rem; line-height: 1;">+</span>
+                                <span style="color: var(--text-main); font-family: 'Inter', sans-serif;">Vanilie (+1 leu)</span>
+                                <input type="checkbox" id="aroma-vanilie" name="aroma-type" value="Vanilie" style="margin-left: auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-green);">
+                            </label>
+                        </div>
+                    </fieldset>
                 </div>
                 
                 <div class="form-group">
                     <label for="order-quantity">Cantitate</label>
                     <div style="display: flex; align-items: center; gap: 0; border: 1px solid var(--glass-border); border-radius: 8px; overflow: hidden; background: var(--bg-color); width: fit-content;">
-                        <button type="button" onclick="changeQty(-1)" style="
+                        <button type="button" onclick="changeQty(-1)" aria-label="Scade cantitatea" style="
                             width: 44px; height: 50px; border: none; background: transparent;
                             font-size: 1.4rem; font-weight: 300; color: var(--text-main);
                             cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -100,7 +173,7 @@
                             "
                             oninput="if(this.value<1)this.value=1; if(this.value>20)this.value=20;"
                         >
-                        <button type="button" onclick="changeQty(1)" style="
+                        <button type="button" onclick="changeQty(1)" aria-label="Crește cantitatea" style="
                             width: 44px; height: 50px; border: none; background: transparent;
                             font-size: 1.4rem; font-weight: 300; color: var(--text-main);
                             cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -360,6 +433,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Subsol semantic -->
+    <footer style="padding: 2.5rem 1.5rem; margin-top: auto; border-top: 1px solid var(--glass-border); background: var(--bg-color); text-align: center; font-family: 'Inter', sans-serif;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.2rem;">
+            <nav aria-label="Navigare subsol" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
+                <a href="/" class="nav-link">Acasă</a>
+                <a href="/meniu" class="nav-link active">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link">Vreau cafea la evenimentul meu</a>
+            </nav>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+                © 2026 Presso Coffee Cart · Timișoara, România · Cafea de specialitate pentru evenimente
+            </p>
+        </div>
+    </footer>
 
     <script type="module" src="client.js"></script>
     <script>

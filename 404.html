@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina nu a fost găsită (404) | Presso Coffee Cart</title>
+    <meta name="description" content="Pagina căutată nu există sau a fost mutată. Revino la pagina principală Presso Coffee Cart sau vezi meniul de cafea.">
+    <meta name="robots" content="noindex, follow">
+    <meta name="theme-color" content="#5d7a4e">
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/playfair-display-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Sari la conținut</a>
+
+    <header>
+        <div class="header-container">
+            <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="/assets/img/presso-coffee-cart-logo-110.webp" srcset="/assets/img/presso-coffee-cart-logo-110.webp 1x, /assets/img/presso-coffee-cart-logo-220.webp 2x" alt="Presso Coffee Cart" class="header-logo" width="55" height="55">
+            </a>
+            <nav class="header-nav" aria-label="Navigare principală">
+                <a href="/" class="nav-link">Acasă</a>
+                <a href="/meniu" class="nav-link">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link">Vreau cafea la evenimentul meu</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-offset" id="main-content" style="text-align: center; max-width: 640px; padding-top: 4rem;">
+        <p style="font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem;">Eroare 404</p>
+        <h1 style="margin-bottom: 1rem;">Pagina nu a fost găsită</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem;">
+            Linkul pe care l-ai accesat nu există sau a fost mutat. Te poți întoarce acasă sau poți arunca o privire pe meniul nostru de cafea.
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="/" class="btn" style="width: auto; padding: 0.9rem 2.2rem; text-decoration: none; display: inline-block; margin-top: 0;">Înapoi acasă</a>
+            <a href="/meniu" class="btn" style="width: auto; padding: 0.9rem 2.2rem; text-decoration: none; display: inline-block; margin-top: 0; background: transparent; color: var(--primary-green); border: 2px solid var(--primary-green);">Vezi meniul</a>
+        </div>
+    </main>
+
+    <script>
+        // Păstrează spațiul de sub header-ul fix, ca pe celelalte pagini
+        const header = document.querySelector('header');
+        const main = document.getElementById('main-content');
+        function initHeader() { main.style.paddingTop = header.offsetHeight + 48 + 'px'; }
+        initHeader();
+        window.addEventListener('resize', initHeader);
+    </script>
+    <script type="module" src="/contact.js"></script>
+</body>
+</html>

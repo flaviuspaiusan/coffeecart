@@ -3,21 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Cafenea</title>
+    <title>Admin Dashboard - Presso Coffee Cart</title>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="theme-color" content="#5d7a4e">
+
+    <!-- Iconițe și manifest -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Fonturi self-hosted -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* Admin overrides */
         header { position: sticky !important; transform: none !important; }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Sari la conținut</a>
+
     <header>
         <h1>Panou Comenzi</h1>
         <p>Aici apar comenzile plasate de clienți, în timp real.</p>
     </header>
 
-    <main class="container">
+    <main class="container" id="main-content">
         <div class="admin-sections" style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
             <button class="btn" id="tab-orders" onclick="switchTab('orders')" style="flex: 1; min-width: 120px;">Comenzi</button>
             <button class="btn btn-secondary" id="tab-offers" onclick="switchTab('offers')" style="flex: 1; min-width: 120px;">Cereri Oferte</button>

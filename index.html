@@ -3,10 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presso Coffee Cart - Acasă</title>
-    <meta name="description" content="Presso Coffee Cart - Experiențe de cafea de neuitat pentru evenimentele tale. Corporate, nunți, lansări și multe altele.">
+    <title>Coffee Cart Evenimente Timișoara | Presso Coffee Cart</title>
+    <meta name="description" content="Presso Coffee Cart aduce cafea de specialitate la nunți, evenimente corporate, lansări și aniversări. Bază în Timișoara, deplasări în toată România.">
+    <link rel="canonical" href="%SITE_URL%/">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#5d7a4e">
+
+    <!-- Iconițe și manifest -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Presso Coffee Cart">
+    <meta property="og:locale" content="ro_RO">
+    <meta property="og:url" content="%SITE_URL%/">
+    <meta property="og:title" content="Coffee Cart Evenimente Timișoara | Presso Coffee Cart">
+    <meta property="og:description" content="Cafea de specialitate pentru nunți, evenimente corporate, lansări și aniversări. Bază în Timișoara, deplasări în toată România.">
+    <meta property="og:image" content="%SITE_URL%/og/og-home.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Presso Coffee Cart la un eveniment: carucior de cafea cu umbrela si invitati care savureaza cafea">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Coffee Cart Evenimente Timișoara | Presso Coffee Cart">
+    <meta name="twitter:description" content="Cafea de specialitate pentru nunți, evenimente corporate, lansări și aniversări. Bază în Timișoara, deplasări în toată România.">
+    <meta name="twitter:image" content="%SITE_URL%/og/og-home.jpg">
+
+    <!-- Fonturi self-hosted: preload pentru subsetul latin (restul se încarcă la nevoie) -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/playfair-display-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+    <!-- Date structurate (JSON-LD).
+         TODO: adresa stradală, programul și intervalul de prețuri nu au fost furnizate -> nu sunt incluse.
+         Pentru o afacere mobilă (coffee cart) se folosește zona deservită (areaServed), nu o adresă fixă. -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "%SITE_URL%/#website",
+                "url": "%SITE_URL%/",
+                "name": "Presso Coffee Cart",
+                "inLanguage": "ro-RO",
+                "publisher": { "@id": "%SITE_URL%/#organization" }
+            },
+            {
+                "@type": ["LocalBusiness", "FoodEstablishment"],
+                "@id": "%SITE_URL%/#organization",
+                "name": "Presso Coffee Cart",
+                "description": "Coffee cart cu cafea de specialitate pentru nunți, evenimente corporate, lansări și aniversări.",
+                "url": "%SITE_URL%/",
+                "logo": "%SITE_URL%/assets/logo.jpeg",
+                "image": "%SITE_URL%/og/og-home.jpg",
+                "telephone": "+40748151407",
+                "email": "pressocoffeecart@yahoo.com",
+                "foundingDate": "2026",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Timișoara",
+                    "addressCountry": "RO"
+                },
+                "areaServed": { "@type": "Country", "name": "România" },
+                "sameAs": ["https://www.instagram.com/presso.coffee.cart/"]
+            },
+            {
+                "@type": "Service",
+                "@id": "%SITE_URL%/#service",
+                "name": "Coffee cart pentru evenimente",
+                "serviceType": "Servicii de cafea pentru evenimente",
+                "provider": { "@id": "%SITE_URL%/#organization" },
+                "areaServed": { "@type": "Country", "name": "România" },
+                "url": "%SITE_URL%/oferta"
+            }
+        ]
+    }
+    </script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -362,16 +437,17 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Sari la conținut</a>
 
     <header>
         <div class="header-container">
             <a href="/" style="display: flex; align-items: center; text-decoration: none;">
-                <img src="/assets/logo.jpeg" alt="Presso Coffee Cart" class="header-logo">
+                <img src="/assets/img/presso-coffee-cart-logo-110.webp" srcset="/assets/img/presso-coffee-cart-logo-110.webp 1x, /assets/img/presso-coffee-cart-logo-220.webp 2x" alt="Presso Coffee Cart" class="header-logo" width="55" height="55" fetchpriority="high">
             </a>
-            <nav class="header-nav">
+            <nav class="header-nav" aria-label="Navigare principală">
                 <a href="/" class="nav-link active">Acasă</a>
-                <a href="meniu.html" class="nav-link">Meniu Cafea</a>
-                <a href="oferta.html" class="nav-link">Vreau cafea la evenimentul meu</a>
+                <a href="/meniu" class="nav-link">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link">Vreau cafea la evenimentul meu</a>
             </nav>
         </div>
     </header>
@@ -388,8 +464,8 @@
                 Specialty coffee pentru evenimente care vor să fie ținute minte.
             </p>
             <div class="hero-actions">
-                <a href="oferta.html" class="btn" style="padding: 0.9rem 2.2rem; font-size: 1rem; text-decoration: none; display: inline-block;">Vreau cafea la evenimentul meu</a>
-                <a href="meniu.html" class="btn-outline">Vezi Meniul</a>
+                <a href="/oferta" class="btn" style="padding: 0.9rem 2.2rem; font-size: 1rem; text-decoration: none; display: inline-block;">Vreau cafea la evenimentul meu</a>
+                <a href="/meniu" class="btn-outline">Vezi Meniul</a>
             </div>
             <div class="hero-scroll-hint">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
@@ -399,11 +475,11 @@
 
         <!-- GALLERY STRIP -->
         <div class="gallery-strip">
-            <img src="/assets/presso-nunta.jpg" alt="Presso Coffee Cart la nuntă" class="g-tall">
-            <img src="/assets/presso-piscina.jpg" alt="Presso Coffee Cart lângă piscină">
-            <img src="/assets/presso-salon.jpg" alt="Presso Coffee Cart într-un salon de evenimente">
-            <img src="/assets/4.jpeg" alt="Presso detalii">
-            <img src="/assets/5.jpeg" alt="Presso atmosfera">
+            <img src="/assets/img/presso-coffee-cart-nunta-miri-480.webp" srcset="/assets/img/presso-coffee-cart-nunta-miri-480.webp 480w, /assets/img/presso-coffee-cart-nunta-miri-575.webp 575w" sizes="(max-width: 768px) 50vw, 300px" width="575" height="766" alt="Miri sărbătorind lângă Presso Coffee Cart" class="g-tall" loading="lazy">
+            <img src="/assets/img/presso-coffee-cart-piscina-480.webp" srcset="/assets/img/presso-coffee-cart-piscina-480.webp 480w, /assets/img/presso-coffee-cart-piscina-800.webp 800w, /assets/img/presso-coffee-cart-piscina-991.webp 991w" sizes="(max-width: 768px) 50vw, 300px" width="800" height="600" alt="Presso Coffee Cart amenajat lângă piscină" loading="lazy">
+            <img src="/assets/img/presso-coffee-cart-salon-evenimente-480.webp" srcset="/assets/img/presso-coffee-cart-salon-evenimente-480.webp 480w, /assets/img/presso-coffee-cart-salon-evenimente-800.webp 800w, /assets/img/presso-coffee-cart-salon-evenimente-903.webp 903w" sizes="(max-width: 768px) 50vw, 300px" width="800" height="600" alt="Presso Coffee Cart într-un salon elegant de evenimente" loading="lazy">
+            <img src="/assets/img/presso-coffee-cart-bar-flori-eveniment-480.webp" srcset="/assets/img/presso-coffee-cart-bar-flori-eveniment-480.webp 480w, /assets/img/presso-coffee-cart-bar-flori-eveniment-800.webp 800w" sizes="(max-width: 768px) 50vw, 300px" width="800" height="600" alt="Detaliu bar Presso Coffee Cart decorat cu flori" loading="lazy">
+            <img src="/assets/img/presso-coffee-cart-barista-prepara-cafea-480.webp" srcset="/assets/img/presso-coffee-cart-barista-prepara-cafea-480.webp 480w, /assets/img/presso-coffee-cart-barista-prepara-cafea-800.webp 800w" sizes="(max-width: 768px) 50vw, 300px" width="800" height="600" alt="Barista Presso preparând cafea de specialitate" loading="lazy">
         </div>
 
 
@@ -418,7 +494,7 @@
         <!-- STORY -->
         <section class="story-section">
             <div class="story-image-wrap">
-                <img src="/assets/6.jpeg" alt="Povestea Presso">
+                <img src="/assets/img/presso-coffee-cart-cuplu-pahare-cafea-800.webp" srcset="/assets/img/presso-coffee-cart-cuplu-pahare-cafea-480.webp 480w, /assets/img/presso-coffee-cart-cuplu-pahare-cafea-800.webp 800w, /assets/img/presso-coffee-cart-cuplu-pahare-cafea-1077.webp 1077w" sizes="(max-width: 768px) 100vw, 550px" width="800" height="960" alt="Oaspeți savurând cafea de specialitate Presso" loading="lazy">
             </div>
             <div>
                 <p class="section-eyebrow">Povestea noastră</p>
@@ -475,10 +551,10 @@
             <p class="section-eyebrow" style="text-align: center;">Momente Presso</p>
             <h2 class="section-title" style="text-align: center;">Fiecare eveniment,<br>o poveste</h2>
             <div class="mosaic-grid">
-                <img src="/assets/presso-terasa.jpg" alt="Presso Coffee Cart pe terasă" class="m-wide" style="object-position: center 55%;">
-                <img src="/assets/5.jpeg" alt="Moment 5" class="m-tall">
-                <img src="/assets/4.jpeg" alt="Moment 4">
-                <img src="/assets/presso-nunta.jpg" alt="Miri la Presso Coffee Cart" style="object-position: center 40%;">
+                <img src="/assets/img/presso-coffee-cart-terasa-480.webp" srcset="/assets/img/presso-coffee-cart-terasa-480.webp 480w, /assets/img/presso-coffee-cart-terasa-768.webp 768w" sizes="(max-width: 768px) 100vw, 600px" width="768" height="512" alt="Presso Coffee Cart amenajat pe terasă în aer liber" class="m-wide" style="object-position: center 55%;" loading="lazy">
+                <img src="/assets/img/presso-coffee-cart-barista-prepara-cafea-480.webp" width="480" height="640" alt="Barista Presso preparând latte art" class="m-tall" loading="lazy">
+                <img src="/assets/img/presso-coffee-cart-bar-flori-eveniment-480.webp" width="480" height="360" alt="Barul mobil de cafea Presso decorat floral" loading="lazy">
+                <img src="/assets/img/presso-coffee-cart-nunta-miri-480.webp" width="480" height="640" alt="Miri la Presso Coffee Cart" style="object-position: center 40%;" loading="lazy">
             </div>
         </section>
 
@@ -486,10 +562,24 @@
         <div class="cta-section">
             <h2>Evenimentul tău merită<br>mai mult decât o cafea obișnuită.</h2>
             <p>Contactează-ne și primești o ofertă personalizată în mai puțin de 24 de ore.</p>
-            <a href="oferta.html" class="btn-white">Vreau cafea la evenimentul meu →</a>
+            <a href="/oferta" class="btn-white">Vreau cafea la evenimentul meu →</a>
         </div>
 
     </main>
+
+    <!-- Subsol semantic -->
+    <footer style="padding: 2.5rem 1.5rem; margin-top: auto; border-top: 1px solid var(--glass-border); background: var(--bg-color); text-align: center; font-family: 'Inter', sans-serif;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.2rem;">
+            <nav aria-label="Navigare subsol" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
+                <a href="/" class="nav-link active">Acasă</a>
+                <a href="/meniu" class="nav-link">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link">Vreau cafea la evenimentul meu</a>
+            </nav>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+                © 2026 Presso Coffee Cart · Timișoara, România · Cafea de specialitate pentru evenimente
+            </p>
+        </div>
+    </footer>
 
     <script>
         const header = document.querySelector('header');

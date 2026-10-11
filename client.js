@@ -27,6 +27,7 @@ const defaultMenuItems = [
     { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: '/assets/iced_coffee_image_1778599653110.png' },
     { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.png' },
     { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.png' },
+    { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte', desc: '380 ml', image: '/assets/pumpkin_spice_latte.webp' },
     { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.png' },
     { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.png' }
 ]
@@ -148,6 +149,11 @@ async function loadMenu() {
                 const t = defaultMenuItems.find(i => i.id === 'tiramisu_latte')
                 if (t) items.push(t)
             }
+            // Asigură-te că Pumpkin Spice Latte apare chiar dacă nu e în DB
+            if (!items.some(i => i.id === 'pumpkin_spice_latte' || (i.name && i.name.toLowerCase().includes('pumpkin')))) {
+                const p = defaultMenuItems.find(i => i.id === 'pumpkin_spice_latte')
+                if (p) items.push(p)
+            }
         }
 
         // Filtreaza produsele out of stock
@@ -264,12 +270,13 @@ function renderMenu() {
         if (idLower === 'americano' || nameLower === 'americano') return 4
         if (idLower.includes('cappuccino') || nameLower.includes('cappuccino') || idLower.includes('cappucino') || nameLower.includes('cappucino')) return 5
         if (idLower.includes('flat') || nameLower.includes('flat')) return 6
-        if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !idLower.includes('pistachio') && !idLower.includes('tiramisu'))) return 7
+        if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !nameLower.includes('pumpkin') && !idLower.includes('pistachio') && !idLower.includes('tiramisu') && !idLower.includes('pumpkin'))) return 7
         if (idLower.includes('iced_coffee') || nameLower.includes('iced coffee') || idLower.includes('iced coffeee') || nameLower.includes('iced coffeee')) return 8
         if (idLower.includes('pistachio') || nameLower.includes('pistachio')) return 9
         if (idLower.includes('tiramisu') || nameLower.includes('tiramisu')) return 10
         if (idLower.includes('cold_brew_tonic') || nameLower.includes('cold brew tonic')) return 11
         if (idLower.includes('tropical') || nameLower.includes('tropical')) return 12
+        if (idLower.includes('pumpkin') || nameLower.includes('pumpkin')) return 13
         return 99
     }
 
@@ -315,13 +322,14 @@ function getItemPrice(item) {
     if (id === 'americano' || name === 'americano') return `${p('americano') || '10'} lei`
     if (id.includes('cappuccino') || name.includes('cappuccino') || id.includes('cappucino') || name.includes('cappucino')) return `${p('cappuccino') || '13'} lei`
     if (id.includes('flat') || name.includes('flat')) return `${p('flat_white') || '14'} lei`
-    // ⚠️ pistachio & tiramisu BEFORE latte and iced_coffee (names overlap!)
+    // ⚠️ pistachio, tiramisu & pumpkin BEFORE latte and iced_coffee (names overlap!)
     if (id.includes('pistachio') || name.includes('pistachio')) return `${p('pistachio_latte') || '17'} lei`
     if (id.includes('tiramisu') || name.includes('tiramisu')) return `${p('tiramisu_latte') || '17'} lei`
+    if (id.includes('pumpkin') || name.includes('pumpkin')) return `${p('pumpkin_spice_latte') || '17'} lei`
     if (id.includes('cold_brew_tonic') || name.includes('cold brew tonic')) return `${p('cold_brew_tonic') || '16'} lei`
     if (id.includes('tropical') || name.includes('tropical')) return `${p('tropical_cold_brew') || '16'} lei`
     if (id.includes('iced_coffee') || name.includes('iced coffee') || id.includes('iced coffeee') || name.includes('iced coffeee')) return `${p('iced_coffee') || '15'} lei`
-    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !id.includes('pistachio') && !id.includes('tiramisu'))) return `${p('latte_macchiato') || '14'} lei`
+    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !name.includes('pumpkin') && !id.includes('pistachio') && !id.includes('tiramisu') && !id.includes('pumpkin'))) return `${p('latte_macchiato') || '14'} lei`
     return ''
 }
 
@@ -346,10 +354,11 @@ function getItemPriceNumeric(item, espressoType) {
     if (id.includes('flat') || name.includes('flat')) return p('flat_white') || 14
     if (id.includes('pistachio') || name.includes('pistachio')) return p('pistachio_latte') || 17
     if (id.includes('tiramisu') || name.includes('tiramisu')) return p('tiramisu_latte') || 17
+    if (id.includes('pumpkin') || name.includes('pumpkin')) return p('pumpkin_spice_latte') || 17
     if (id.includes('cold_brew_tonic') || name.includes('cold brew tonic')) return p('cold_brew_tonic') || 16
     if (id.includes('tropical') || name.includes('tropical')) return p('tropical_cold_brew') || 16
     if (id.includes('iced_coffee') || name.includes('iced coffee') || id.includes('iced coffeee') || name.includes('iced coffeee')) return p('iced_coffee') || 15
-    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !id.includes('pistachio') && !id.includes('tiramisu'))) return p('latte_macchiato') || 14
+    if (id.includes('latte_macchiato') || name.includes('latte macchiato') || (name.includes('latte') && !name.includes('pistachio') && !name.includes('tiramisu') && !name.includes('pumpkin') && !id.includes('pistachio') && !id.includes('tiramisu') && !id.includes('pumpkin'))) return p('latte_macchiato') || 14
     return null
 }
 

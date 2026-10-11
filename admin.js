@@ -25,6 +25,7 @@ const defaultMenuItems = [
     { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: '/assets/iced_coffee_image_1778599653110.png' },
     { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.png' },
     { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.png' },
+    { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte', desc: '380 ml', image: '/assets/pumpkin_spice_latte.webp' },
     { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.png' },
     { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.png' }
 ]
@@ -443,6 +444,39 @@ window.clearOrders = async function() {
 }
 
 // --- Menu Management ---
+let pumpkinSyncAttempted = false
+async function ensurePumpkinInDatabase() {
+    if (pumpkinSyncAttempted) return
+    pumpkinSyncAttempted = true
+    try {
+        const items = await SupabaseService.getMenuItems()
+        if (items && !items.some(i => i.id === 'pumpkin_spice_latte' || (i.name && i.name.toLowerCase().includes('pumpkin')))) {
+            let imgData = '/assets/pumpkin_spice_latte.webp'
+            try {
+                const res = await fetch('/assets/pumpkin_spice_latte.webp')
+                if (res.ok) {
+                    const blob = await res.blob()
+                    imgData = await new Promise((resolve) => {
+                        const reader = new FileReader()
+                        reader.onloadend = () => resolve(reader.result)
+                        reader.readAsDataURL(blob)
+                    })
+                }
+            } catch (fe) {
+                console.warn('Could not read image as data URL for DB:', fe)
+            }
+            await SupabaseService.saveMenuItem({
+                id: 'pumpkin_spice_latte',
+                name: 'Pumpkin spice latte',
+                desc: '380 ml',
+                image: imgData
+            })
+            console.log('[Presso Admin] Pumpkin spice latte a fost salvat cu succes în baza de date!')
+        }
+    } catch (e) {
+        // Ignoră eroarea dacă baza de date nu este conectată local
+    }
+}
 async function loadMenu() {
     try {
         let items = await SupabaseService.getMenuItems()
@@ -454,7 +488,15 @@ async function loadMenu() {
                 const t = defaultMenuItems.find(i => i.id === 'tiramisu_latte')
                 if (t) items.push(t)
             }
+            // Asigură-te că Pumpkin Spice Latte apare chiar dacă nu e în DB
+            if (!items.some(i => i.id === 'pumpkin_spice_latte' || (i.name && i.name.toLowerCase().includes('pumpkin')))) {
+                const p = defaultMenuItems.find(i => i.id === 'pumpkin_spice_latte')
+                if (p) items.push(p)
+            }
         }
+        
+        // Sincronizează Pumpkin spice latte în baza de date Supabase dacă lipsește
+        ensurePumpkinInDatabase()
         
         currentMenuAdmin = items
         // Incarca lista out of stock din Supabase
@@ -485,12 +527,13 @@ async function loadMenu() {
             if (idLower === 'americano' || nameLower === 'americano') return 4
             if (idLower.includes('cappuccino') || nameLower.includes('cappuccino') || idLower.includes('cappucino') || nameLower.includes('cappucino')) return 5
             if (idLower.includes('flat') || nameLower.includes('flat')) return 6
-            if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !idLower.includes('pistachio') && !idLower.includes('tiramisu'))) return 7
+            if (idLower.includes('latte_macchiato') || nameLower.includes('latte macchiato') || (nameLower.includes('latte') && !nameLower.includes('pistachio') && !nameLower.includes('tiramisu') && !nameLower.includes('pumpkin') && !idLower.includes('pistachio') && !idLower.includes('tiramisu') && !idLower.includes('pumpkin'))) return 7
             if (idLower.includes('iced_coffee') || nameLower.includes('iced coffee') || idLower.includes('iced coffeee') || nameLower.includes('iced coffeee')) return 8
             if (idLower.includes('pistachio') || nameLower.includes('pistachio')) return 9
             if (idLower.includes('tiramisu') || nameLower.includes('tiramisu')) return 10
             if (idLower.includes('cold_brew_tonic') || nameLower.includes('cold brew tonic')) return 11
             if (idLower.includes('tropical') || nameLower.includes('tropical')) return 12
+            if (idLower.includes('pumpkin') || nameLower.includes('pumpkin')) return 13
             return 99
         }
 
@@ -736,6 +779,7 @@ const DEFAULT_PRICES = [
     { id: 'iced_coffee',       name: 'Iced Coffee',                   priceDisplay: '15' },
     { id: 'pistachio_latte',   name: 'Pistachio Strawberry Iced Latte', priceDisplay: '17' },
     { id: 'tiramisu_latte',    name: 'Tiramisu Iced Latte',           priceDisplay: '17' },
+    { id: 'pumpkin_spice_latte', name: 'Pumpkin spice latte',         priceDisplay: '17' },
     { id: 'cold_brew_tonic',   name: 'Cold Brew Tonic',               priceDisplay: '16' },
     { id: 'tropical_cold_brew',name: 'Tropical Cold Brew',            priceDisplay: '16' },
 ]

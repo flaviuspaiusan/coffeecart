@@ -3,26 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presso - Cere Ofertă Eveniment</title>
+    <title>Cere Ofertă Coffee Cart Evenimente | Presso Coffee Cart</title>
+    <meta name="description" content="Cere o ofertă personalizată de coffee cart pentru nunta ta, eveniment corporate sau petrecere privată. Cafea de specialitate preparată live de barista în Timișoara și România.">
+    <link rel="canonical" href="%SITE_URL%/oferta">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#5d7a4e">
+
+    <!-- Iconițe și manifest -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Presso Coffee Cart">
+    <meta property="og:locale" content="ro_RO">
+    <meta property="og:url" content="%SITE_URL%/oferta">
+    <meta property="og:title" content="Cere Ofertă Coffee Cart Evenimente | Presso Coffee Cart">
+    <meta property="og:description" content="Cere o ofertă personalizată de coffee cart pentru nunta ta, eveniment corporate sau petrecere privată. Cafea de specialitate preparată live de barista în Timișoara și România.">
+    <meta property="og:image" content="%SITE_URL%/og/og-oferta.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Presso Coffee Cart la eveniment - cere ofertă personalizată">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cere Ofertă Coffee Cart Evenimente | Presso Coffee Cart">
+    <meta name="twitter:description" content="Cere o ofertă personalizată de coffee cart pentru nunta ta, eveniment corporate sau petrecere privată. Cafea de specialitate preparată live de barista în Timișoara și România.">
+    <meta name="twitter:image" content="%SITE_URL%/og/og-oferta.jpg">
+
+    <!-- Fonturi self-hosted -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/playfair-display-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+    <!-- Date structurate (JSON-LD): BreadcrumbList, ContactPage, FAQPage -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "@id": "%SITE_URL%/oferta#breadcrumbs",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Acasă",
+                        "item": "%SITE_URL%/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Cere Ofertă",
+                        "item": "%SITE_URL%/oferta"
+                    }
+                ]
+            },
+            {
+                "@type": "ContactPage",
+                "@id": "%SITE_URL%/oferta#contactpage",
+                "url": "%SITE_URL%/oferta",
+                "name": "Cere Ofertă Coffee Cart Evenimente | Presso Coffee Cart",
+                "description": "Formular de solicitare ofertă personalizată de coffee cart mobil cu cafea de specialitate pentru evenimente private și corporate.",
+                "isPartOf": { "@id": "%SITE_URL%/#website" },
+                "breadcrumb": { "@id": "%SITE_URL%/oferta#breadcrumbs" },
+                "inLanguage": "ro-RO"
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "%SITE_URL%/oferta#faq",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "În ce localități vă deplasați cu Presso Coffee Cart?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Baza noastră este în Timișoara, dar ne deplasăm cu coffee cart-ul la nunți, conferințe și evenimente private în toată România."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Ce conține pachetul complet de cafea pentru evenimente?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Pachetul include căruciorul mobil de cafea complet utilat, espressor profesional, barista dedicat pe durata evenimentului, cafea de specialitate proaspăt prăjită, băuturi pe bază de lapte și alternative vegetale, siropuri artizanale și pahare ecologice."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Cât durează montarea și calibrarea caruciorului de cafea?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Ajungem la locație cu 60-90 de minute înainte de sosirea invitaților pentru instalare completă, încălzirea espressorului și calibrarea rețetelor de espresso."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "În cât timp primesc oferta personalizată de preț?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "După trimiterea formularului, revenim cu o ofertă detaliată și personalizată pe email sau telefonic în maximum 24 de ore."
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Sari la conținut</a>
+
     <header>
         <div class="header-container">
             <a href="/" style="display: flex; align-items: center; text-decoration: none;">
-                <img src="/assets/logo.jpeg" alt="Presso Coffee Cart" class="header-logo">
+                <img src="/assets/img/presso-coffee-cart-logo-110.webp" srcset="/assets/img/presso-coffee-cart-logo-110.webp 1x, /assets/img/presso-coffee-cart-logo-220.webp 2x" alt="Presso Coffee Cart" class="header-logo" width="55" height="55" fetchpriority="high">
             </a>
-            <nav class="header-nav">
+            <nav class="header-nav" aria-label="Navigare principală">
                 <a href="/" class="nav-link">Acasă</a>
-                <a href="meniu.html" class="nav-link">Meniu Cafea</a>
-                <a href="oferta.html" class="nav-link active">Vreau cafea la evenimentul meu</a>
+                <a href="/meniu" class="nav-link">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link active">Vreau cafea la evenimentul meu</a>
             </nav>
         </div>
     </header>
 
     <main class="container main-offset" id="main-content" style="max-width: 600px;">
-        <h2 style="margin-bottom: 1rem; color: var(--primary-brown); text-align: center;">Cere Ofertă</h2>
+        <h1 style="margin-bottom: 1rem; color: var(--primary-brown); text-align: center; font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 2.8rem);">Cere Ofertă Eveniment</h1>
             <p style="color: var(--text-muted); text-align: center; margin-bottom: 2.5rem; font-size: 0.95rem;">Completează formularul de mai jos pentru a primi oferta personalizată pentru evenimentul tău.</p>
             
             <form id="oferta-form">
@@ -102,6 +208,20 @@
                 <button type="submit" class="btn" id="submit-btn" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Trimite Solicitarea</button>
             </form>
     </main>
+
+    <!-- Subsol semantic -->
+    <footer style="padding: 2.5rem 1.5rem; margin-top: auto; border-top: 1px solid var(--glass-border); background: var(--bg-color); text-align: center; font-family: 'Inter', sans-serif;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1.2rem;">
+            <nav aria-label="Navigare subsol" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
+                <a href="/" class="nav-link">Acasă</a>
+                <a href="/meniu" class="nav-link">Meniu Cafea</a>
+                <a href="/oferta" class="nav-link active">Vreau cafea la evenimentul meu</a>
+            </nav>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+                © 2026 Presso Coffee Cart · Timișoara, România · Cafea de specialitate pentru evenimente
+            </p>
+        </div>
+    </footer>
 
     <div class="toast-container" id="toast-container"></div>
 
