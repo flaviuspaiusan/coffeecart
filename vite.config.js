@@ -1,9 +1,8 @@
 import { defineConfig, loadEnv } from 'vite'
 import { execSync } from 'node:child_process'
 
-// Domeniul final se setează din variabila de mediu SITE_URL (ex. în Vercel → Settings → Environment Variables).
-// TODO: setează SITE_URL=https://domeniul-tau.ro înainte de lansare; până atunci se folosește placeholder-ul de mai jos.
-const DEFAULT_SITE_URL = 'https://exemplu.ro'
+// Domeniul final configurat pe presso.ro
+const DEFAULT_SITE_URL = 'https://presso.ro'
 
 // Pagini indexabile (intră în sitemap.xml). `/admin` și `/404` sunt excluse intenționat.
 const INDEXABLE_PAGES = [

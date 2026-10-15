@@ -11,7 +11,7 @@
 | Repo | github.com/flaviuspaiusan/coffeecart (branch cu deploy automat) |
 | Randare | Pagini HTML statice (conținut principal în HTML = SSG-like). Meniul (`/meniu`) și panoul admin sunt populate din JS/Supabase (CSR) |
 | Limbi | ro (un singur `lang="ro"`) |
-| Domeniu final | **TODO – neconfirmat** (placeholder: `https://exemplu.ro`) |
+| Domeniu final | Confirmat: `https://presso.ro` |
 
 ## Rute
 
