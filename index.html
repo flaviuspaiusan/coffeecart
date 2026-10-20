@@ -448,7 +448,7 @@
             <nav class="header-nav" aria-label="Navigare principală">
                 <a href="/" class="nav-link active">Acasă</a>
                 <a href="/meniu" class="nav-link">Meniu</a>
-                <a href="#doze" class="nav-link">Doze la domiciliu</a>
+                <a href="/doze" class="nav-link">Doze la domiciliu</a>
                 <a href="/oferta" class="nav-link">Coffee cart la evenimentul meu</a>
             </nav>
         </div>
@@ -468,7 +468,7 @@
             <div class="hero-actions">
                 <a href="/oferta" class="btn" style="padding: 0.9rem 2.2rem; font-size: 1rem; text-decoration: none; display: inline-block;">Coffee cart la evenimentul meu</a>
                 <a href="/meniu" class="btn-outline">Meniu</a>
-                <a href="#doze" class="btn-outline">Doze la domiciliu</a>
+                <a href="/doze" class="btn-outline">Doze la domiciliu</a>
             </div>
             <div class="hero-scroll-hint">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
@@ -561,199 +561,20 @@
             </div>
         </section>
 
-        <!-- SECȚIUNE COMANDĂ DOZE LA DOMICILIU -->
-        <section id="doze" class="cans-order-section" aria-labelledby="doze-title">
-            <div class="cans-header">
+        <!-- SECȚIUNE DOZE LA DOMICILIU (PREZENTARE PE HOMEPAGE) -->
+        <section id="doze" class="cans-order-section" aria-labelledby="doze-title" style="margin-top: 3.5rem; margin-bottom: 2rem;">
+            <div class="cans-header" style="max-width: 820px; margin: 0 auto; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--card-radius); padding: 3.5rem 2rem; text-align: center; box-shadow: 0 10px 40px rgba(93, 122, 78, 0.05);">
                 <span class="section-eyebrow">Nou · Livrare Direct la Ușă</span>
-                <h2 class="section-title" id="doze-title">Doze Artizanale Presso<br><em>Gata Ambalate la Domiciliu</em></h2>
-                <p class="section-body" style="max-width: 680px; margin: 0 auto 1.5rem auto;">
+                <h2 class="section-title" id="doze-title" style="margin-bottom: 1.2rem;">Doze Artizanale Presso<br><em>Gata Ambalate la Domiciliu</em></h2>
+                <p class="section-body" style="max-width: 680px; margin: 0 auto 2.2rem auto; font-size: 1.05rem; line-height: 1.6;">
                     Bucură-te de gustul inconfundabil Presso oriunde: acasă, la birou sau la evenimentul tău privat. 
                     Băuturile noastre semnătură sunt preparate proaspăt din cafea de specialitate și sigilate în doze artizanale.
                 </p>
-
-                <div class="cans-badges-row" style="margin-bottom: 2rem;">
-                    <div class="can-pill-badge">
-                        <span class="can-pill-icon">🏷️</span>
-                        <span><strong>22 - 25 lei</strong> / doză</span>
-                    </div>
-                    <div class="can-pill-badge">
-                        <span class="can-pill-icon">📦</span>
-                        <span>Comandă minimă: <strong>20 doze</strong> (mix liber)</span>
-                    </div>
-                    <div class="can-pill-badge">
-                        <span class="can-pill-icon">🚚</span>
-                        <span>Livrare programată <strong>(minim 24h în avans)</strong></span>
-                    </div>
-                    <div class="can-pill-badge">
-                        <span class="can-pill-icon">💳</span>
-                        <span>Plată <strong>Cash la livrare</strong> sau <strong>Transfer bancar</strong></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Grila de produse (Doze) -->
-            <div class="doze-grid" id="doze-grid">
-                <!-- Generat automat din CANS_CATALOG în doze.js -->
-            </div>
-
-            <!-- Bara de stare & comandă minimă -->
-            <aside class="doze-cart-bar" aria-label="Sumar selecție doze">
-                <div class="doze-bar-content">
-                    <div class="doze-bar-info">
-                        <div class="doze-bar-metrics">
-                            <span class="metric-label">Doze selectate:</span>
-                            <span class="metric-value"><strong id="doze-total-count">0</strong> / 20 min</span>
-                            <span class="metric-separator">·</span>
-                            <span class="metric-label">Total:</span>
-                            <span class="metric-value price" id="doze-total-price">0 lei</span>
-                        </div>
-                        <div class="doze-progress-wrap">
-                            <div class="doze-bar-track">
-                                <div id="doze-bar-progress" class="doze-bar-progress" style="width: 0%;"></div>
-                            </div>
-                            <p id="doze-status-text" class="doze-status-msg">
-                                Alege aromele dorite. <strong>Comandă minimă: 20 doze</strong> (mix liber de arome).
-                            </p>
-                        </div>
-                    </div>
-                    <button type="button" id="doze-btn-proceed" class="btn disabled" onclick="window.scrollToDozeCheckout()" disabled>
-                        Alege minim 20 doze (încă 20)
-                    </button>
-                </div>
-            </aside>
-
-            <!-- SECȚIUNE FINALIZARE COMANDĂ (Checkout) -->
-            <div id="doze-checkout-section" class="doze-checkout-wrap" style="display: none;">
-                <div class="doze-checkout-card">
-                    <div class="checkout-header">
-                        <span class="section-eyebrow">Pasul 2 · Detalii Livrare</span>
-                        <h3 class="checkout-title">Finalizare Comandă Doze</h3>
-                        <p class="checkout-subtitle">Completează datele pentru livrare. Comenzile se plasează cu cel puțin o zi înainte de data livrării.</p>
-                    </div>
-
-                    <div class="checkout-grid">
-                        <!-- Rezumat selecție -->
-                        <div class="checkout-summary-box">
-                            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-main);">Rezumatul Comenzii</h4>
-                            <div id="doze-summary-items" class="summary-items-list">
-                                <!-- Generat din JS -->
-                            </div>
-                            <div class="summary-totals-row">
-                                <span>Total doze:</span>
-                                <strong id="doze-summary-final-count">0 doze</strong>
-                            </div>
-                            <div class="summary-totals-row highlight">
-                                <span>Total de plată:</span>
-                                <strong id="doze-summary-final-price">0 lei</strong>
-                            </div>
-                            <div class="summary-note">
-                                ℹ️ Băuturile sunt preparate proaspăt din cafea de specialitate și îmbuteliate artizanal special pentru comanda ta.
-                            </div>
-                        </div>
-
-                        <!-- Formularul de livrare -->
-                        <div class="checkout-form-box">
-                            <form id="doze-order-form" class="doze-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="doze-customer-name">Nume și Prenume *</label>
-                                        <input type="text" id="doze-customer-name" name="nume" required placeholder="ex. Alexandru Popescu">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="doze-customer-phone">Număr Telefon *</label>
-                                        <input type="tel" id="doze-customer-phone" name="telefon" required placeholder="07xxxxxxxx">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="doze-customer-email">Adresă Email *</label>
-                                    <input type="email" id="doze-customer-email" name="email" required placeholder="exemplu@email.com">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="doze-delivery-address">Adresă Completă de Livrare *</label>
-                                    <textarea id="doze-delivery-address" name="adresa" rows="2" required placeholder="Oraș, Stradă, Număr, Bloc, Scară, Apartament / Companie..."></textarea>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="doze-delivery-date">Data Livrării (minim o zi în avans) *</label>
-                                        <input type="date" id="doze-delivery-date" name="data_livrare" required>
-                                        <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.25rem;">Comanda se pregătește cu minimum 24h înainte.</small>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="doze-delivery-time">Interval Orar Livrare *</label>
-                                        <select id="doze-delivery-time" name="ora_livrare" required>
-                                            <option value="09:00 - 12:00">Dimineața (09:00 - 12:00)</option>
-                                            <option value="12:00 - 15:00" selected>Prânz (12:00 - 15:00)</option>
-                                            <option value="15:00 - 18:00">După-amiază (15:00 - 18:00)</option>
-                                            <option value="18:00 - 21:00">Seara (18:00 - 21:00)</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Opțiuni de plată -->
-                                <div class="form-group payment-group">
-                                    <label style="margin-bottom: 0.6rem; font-weight: 600; display: block;">Metodă de Plată *</label>
-                                    <div class="payment-radios-grid">
-                                        <label class="payment-radio-label">
-                                            <input type="radio" name="doze-payment-method" value="cash" checked>
-                                            <div class="payment-radio-card">
-                                                <span class="pay-icon">💵</span>
-                                                <div>
-                                                    <strong>Cash la livrare</strong>
-                                                    <p>Plătești ramburs când primești dozele.</p>
-                                                </div>
-                                            </div>
-                                        </label>
-                                        <label class="payment-radio-label">
-                                            <input type="radio" name="doze-payment-method" value="transfer_bancar">
-                                            <div class="payment-radio-card">
-                                                <span class="pay-icon">🏦</span>
-                                                <div>
-                                                    <strong>Transfer Bancar (OP)</strong>
-                                                    <p>Vei primi datele de cont și factura proformă.</p>
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-
-                                    <!-- Caseta detalii transfer bancar -->
-                                    <div id="doze-bank-details-box" class="bank-details-info" style="display: none;">
-                                        <div style="font-weight: 700; color: var(--primary-green); margin-bottom: 0.35rem;">Informații Transfer Bancar:</div>
-                                        <p style="font-size: 0.88rem; margin: 0.2rem 0; color: var(--text-main);">Beneficiar: <strong>Presso Coffee Cart SRL</strong></p>
-                                        <p style="font-size: 0.88rem; margin: 0.2rem 0; color: var(--text-main);">IBAN: <strong>RO... (va fi furnizat pe factură / confirmat telefonic)</strong></p>
-                                        <p style="font-size: 0.82rem; margin-top: 0.4rem; color: var(--text-muted);">Te rugăm să menționezi la detalii plată numele tău și numărul comenzii.</p>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="doze-customer-notes">Mențiuni Speciale (Opțional)</label>
-                                    <input type="text" id="doze-customer-notes" name="mentiuni" placeholder="ex. Interfon, indicații curier, etc.">
-                                </div>
-
-                                <button type="submit" id="doze-submit-btn" class="btn" style="width: 100%; padding: 1rem; font-size: 1.05rem; margin-top: 1rem;">
-                                    Plasează Comanda Acum →
-                                </button>
-                                <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.6rem;">
-                                    🔒 Datele tale sunt utilizate strict pentru confirmarea și livrarea comenzii.
-                                </p>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ECRAN SUCCES -->
-            <div id="doze-success-box" class="doze-success-card" style="display: none;">
-                <div class="success-icon-wrap">✓</div>
-                <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--primary-green); margin-bottom: 0.5rem;">Comandă Înregistrată cu Succes!</h3>
-                <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 580px; margin: 0 auto;">
-                    Îți mulțumim! Am primit comanda ta pentru dozele artizanale Presso. Te vom contacta în scurt timp pentru confirmarea finală și detalii de livrare.
-                </p>
-                <div id="doze-success-details"></div>
-                <div style="margin-top: 2rem;">
-                    <a href="/" class="btn" style="text-decoration: none; padding: 0.8rem 1.8rem;">Înapoi la pagina principală</a>
+                <div>
+                    <a href="/doze" class="btn" style="text-decoration: none; padding: 1rem 2.4rem; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 0.6rem;">
+                        <span>Comandă doze la domiciliu</span>
+                        <span>&rarr;</span>
+                    </a>
                 </div>
             </div>
         </section>
@@ -773,7 +594,7 @@
             <nav aria-label="Navigare subsol" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
                 <a href="/" class="nav-link active">Acasă</a>
                 <a href="/meniu" class="nav-link">Meniu</a>
-                <a href="#doze" class="nav-link">Doze la domiciliu</a>
+                <a href="/doze" class="nav-link">Doze la domiciliu</a>
                 <a href="/oferta" class="nav-link">Coffee cart la evenimentul meu</a>
             </nav>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
@@ -812,6 +633,5 @@
     </script>
 
     <script type="module" src="contact.js"></script>
-    <script type="module" src="doze.js"></script>
 </body>
 </html>

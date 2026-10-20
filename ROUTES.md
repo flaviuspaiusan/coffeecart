@@ -18,7 +18,8 @@
 | URL (canonic dorit) | Fișier sursă | Tip pagină | Indexabilă | Observații |
 |---|---|---|---|---|
 | `/` | `index.html` | Homepage / prezentare | **DA** | Singura pagină cu conținut editorial |
-| `/meniu` | `meniu.html` | Meniu + comandă online (conținut din JS) | **DA** (parțial) | Comenzile sunt active doar cu `?scan=...`; variantele cu query nu trebuie indexate separat |
+| `/meniu` | `meniu.html` | Meniu + comandă online (conținut din JS) | **DA** (parțial) | Meniu complet de băuturi fără preț; comenzi active pe bază de QR |
+| `/doze` | `doze.html` | Comandă doze gata ambalate la domiciliu | **DA** | Magazin dedicat selecție și livrare doze artizanale (min. 20 buc) |
 | `/oferta` | `oferta.html` | Formular cerere ofertă (conversie) | **DA** | Pagină de lead-gen, are valoare de căutare ("coffee cart nuntă") |
 | `/admin` | `admin.html` | Panou intern | **NU** | Trebuie `noindex` + blocat în robots + protecție acces |
 | `/?scan=<token>` | `index.html` | Redirect 302 → `/meniu` | NU | Rută QR, redirect temporar (corect 302) |

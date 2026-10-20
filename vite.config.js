@@ -8,6 +8,7 @@ const DEFAULT_SITE_URL = 'https://presso.ro'
 const INDEXABLE_PAGES = [
     { path: '/', file: 'index.html', priority: '1.0', changefreq: 'monthly' },
     { path: '/meniu', file: 'meniu.html', priority: '0.8', changefreq: 'weekly' },
+    { path: '/doze', file: 'doze.html', priority: '0.9', changefreq: 'weekly' },
     { path: '/oferta', file: 'oferta.html', priority: '0.9', changefreq: 'monthly' },
 ]
 
@@ -77,6 +78,7 @@ export default defineConfig(({ mode }) => {
                 input: {
                     main: 'index.html',
                     menu: 'meniu.html',
+                    doze: 'doze.html',
                     offer: 'oferta.html',
                     admin: 'admin.html',
                     notFound: '404.html',
