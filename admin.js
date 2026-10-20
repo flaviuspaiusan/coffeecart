@@ -726,25 +726,30 @@ function renderOffers(offers) {
     offers.forEach(oferta => {
         const date = new Date(oferta.timestamp)
         const dateStr = date.toLocaleDateString('ro-RO') + ' ' + date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+        const isDoze = oferta.id && oferta.id.startsWith('doze_')
 
         const item = document.createElement('div')
         item.className = 'order-item'
-        item.style.borderLeftColor = '#eab308'
+        item.style.borderLeftColor = isDoze ? '#5d7a4e' : '#eab308'
         item.innerHTML = `
             <div class="order-info" style="width: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                    <h3>Cerere de la ${oferta.nume} <span class="badge" style="background: rgba(234, 179, 8, 0.1); color: #eab308;">Ofertă Nouă</span></h3>
-                    <button class="btn btn-secondary" onclick="deleteOffer('${oferta.id}')" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;">Marcată ca Citită</button>
+                    <h3>${isDoze ? '📦 Comandă Doze:' : 'Cerere de la'} ${oferta.nume} 
+                        <span class="badge" style="background: ${isDoze ? 'rgba(93, 122, 78, 0.15)' : 'rgba(234, 179, 8, 0.1)'}; color: ${isDoze ? '#5d7a4e' : '#eab308'}; font-weight: 700;">
+                            ${isDoze ? 'Comandă Doze Domiciliu' : 'Ofertă Eveniment Nouă'}
+                        </span>
+                    </h3>
+                    <button class="btn btn-secondary" onclick="deleteOffer('${oferta.id}')" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;">${isDoze ? 'Marchează ca Livrată' : 'Marcată ca Citită'}</button>
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.75rem 2rem;">
                     <p><strong>Email:</strong> <a href="mailto:${oferta.email}" style="color: var(--primary-brown); text-decoration: none;">${oferta.email}</a></p>
                     <p><strong>Telefon:</strong> <a href="tel:${oferta.telefon}" style="color: var(--primary-brown); text-decoration: none;">${oferta.telefon}</a></p>
-                    ${oferta.companie ? `<p><strong>Companie:</strong> ${oferta.companie}</p>` : ''}
-                    <p><strong>Locație:</strong> ${oferta.locatie}</p>
-                    <p><strong>Data Eveniment:</strong> ${oferta.data}</p>
-                    <p><strong>Nr. Invitați:</strong> ${oferta.invitati} pers.</p>
+                    ${oferta.companie ? `<p><strong>${isDoze ? 'Tip / Plată:' : 'Companie:'}</strong> ${oferta.companie}</p>` : ''}
+                    <p><strong>${isDoze ? 'Adresă Livrare:' : 'Locație:'}</strong> ${oferta.locatie}</p>
+                    <p><strong>${isDoze ? 'Data & Ora Livrării:' : 'Data Eveniment:'}</strong> ${oferta.data}</p>
+                    <p><strong>${isDoze ? 'Cantitate & Sumă:' : 'Nr. Invitați:'}</strong> ${oferta.invitati}</p>
                 </div>
-                ${oferta.comentarii ? `<div style="margin-top: 1rem; padding: 0.8rem; background: rgba(93,64,55,0.03); border-radius: 8px; border: 1px solid var(--glass-border); border-radius: 12px;"><strong>Comentarii:</strong><br><span style="white-space: pre-wrap;">${oferta.comentarii}</span></div>` : ''}
+                ${oferta.comentarii ? `<div style="margin-top: 1rem; padding: 0.8rem; background: ${isDoze ? 'rgba(93, 122, 78, 0.06)' : 'rgba(93,64,55,0.03)'}; border-radius: 8px; border: 1px solid var(--glass-border); border-radius: 12px;"><strong>${isDoze ? 'Detalii Comandă & Doze:' : 'Comentarii:'}</strong><br><span style="white-space: pre-wrap;">${oferta.comentarii}</span></div>` : ''}
                 <div class="order-meta" style="margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 0.5rem;">Trimisă la: ${dateStr}</div>
             </div>
         `
