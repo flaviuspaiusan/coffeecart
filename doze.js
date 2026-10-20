@@ -1,9 +1,11 @@
 import { SupabaseService } from './supabase.js'
+import { sendDozeOrderEmail } from './emailService.js'
 
 export const CANS_CATALOG = [
     {
         id: 'pistachio_latte',
         name: 'Pistachio Strawberry Iced Latte',
+        price: 25,
         shortDesc: 'Espresso de specialitate, piure artizanal de fistic, lapte și note proaspete de căpșuni.',
         volume: '360 ml',
         color: '#5b7a50',
@@ -12,6 +14,7 @@ export const CANS_CATALOG = [
     {
         id: 'tiramisu_latte',
         name: 'Tiramisu Iced Latte',
+        price: 25,
         shortDesc: 'Espresso dublu, cremă mascarpone, aromă delicată de pișcot și pudră de cacao fină.',
         volume: '360 ml',
         color: '#8c593a',
@@ -20,6 +23,7 @@ export const CANS_CATALOG = [
     {
         id: 'pumpkin_spice_latte',
         name: 'Pumpkin Spice Latte',
+        price: 22,
         shortDesc: 'Lapte catifelat infuzat cu piure de dovleac copt, scorțișoară, nucșoară și espresso.',
         volume: '380 ml',
         color: '#c26927',
@@ -28,6 +32,7 @@ export const CANS_CATALOG = [
     {
         id: 'ube_latte',
         name: 'Ube Latte',
+        price: 25,
         shortDesc: 'Băutură semnătură cu ube catifelat, aromă dulceagă florală, vanilie și lapte fin.',
         volume: '380 ml',
         color: '#764ba2',
@@ -36,6 +41,7 @@ export const CANS_CATALOG = [
     {
         id: 'iced_coffee',
         name: 'Iced Coffee',
+        price: 22,
         shortDesc: 'Cafea de specialitate extrasă proaspăt, lapte și gheață, perfect echilibrată.',
         volume: '360 ml',
         color: '#4b382a',
@@ -44,6 +50,7 @@ export const CANS_CATALOG = [
     {
         id: 'cold_brew_tonic',
         name: 'Cold Brew Tonic',
+        price: 22,
         shortDesc: 'Cold brew macerat lent timp de 16 ore, apă tonică premium și efervescență revigorantă.',
         volume: '360 ml',
         color: '#346b53',
@@ -52,6 +59,7 @@ export const CANS_CATALOG = [
     {
         id: 'tropical_cold_brew',
         name: 'Tropical Cold Brew',
+        price: 22,
         shortDesc: 'Cold brew artizanal infuzat cu note exotice de mango și fructul pasiunii.',
         volume: '360 ml',
         color: '#d47124',
@@ -59,7 +67,6 @@ export const CANS_CATALOG = [
     }
 ]
 
-export const PRICE_PER_CAN = 20
 export const MIN_ORDER_CANS = 20
 
 // Stare comenzi doze: { [id]: quantity }
@@ -90,14 +97,14 @@ function renderCansGrid() {
                         <ellipse cx="22" cy="60" rx="15" ry="3" fill="${can.color}" fill-opacity="0.35"/>
                         <rect x="12" y="24" width="20" height="2" rx="1" fill="${can.color}"/>
                         <rect x="15" y="30" width="14" height="2" rx="1" fill="${can.color}" fill-opacity="0.7"/>
-                        <text x="22" y="44" text-anchor="middle" font-family="'Inter', sans-serif" font-size="8" font-weight="700" fill="${can.color}">360ml</text>
+                        <text x="22" y="44" text-anchor="middle" font-family="'Inter', sans-serif" font-size="8" font-weight="700" fill="${can.color}">${can.volume}</text>
                     </svg>
                     <span class="can-badge" style="background: ${can.color}; color: white;">Gata Ambalată</span>
                 </div>
                 <div class="can-info">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.35rem;">
                         <h3 class="can-title">${can.name}</h3>
-                        <span class="can-price">${PRICE_PER_CAN} lei</span>
+                        <span class="can-price">${can.price} lei</span>
                     </div>
                     <p class="can-desc">${can.shortDesc}</p>
                     
@@ -113,7 +120,7 @@ function renderCansGrid() {
                         </div>
                     </div>
                     <div id="subtotal-${can.id}" class="can-subtotal" style="${qty > 0 ? '' : 'display: none;'}">
-                        Subtotal: <strong>${qty * PRICE_PER_CAN} lei</strong> (${qty} doze)
+                        Subtotal: <strong>${qty * can.price} lei</strong> (${qty} doze)
                     </div>
                 </div>
             </div>
@@ -148,6 +155,9 @@ window.setCanQty = function(id, val) {
 function updateCardVisual(id, qty) {
     const card = document.getElementById(`can-card-${id}`)
     const subtotal = document.getElementById(`subtotal-${id}`)
+    const can = CANS_CATALOG.find(c => c.id === id)
+    const price = can ? can.price : 22
+
     if (card) {
         if (qty > 0) card.classList.add('has-qty')
         else card.classList.remove('has-qty')
@@ -155,7 +165,7 @@ function updateCardVisual(id, qty) {
     if (subtotal) {
         if (qty > 0) {
             subtotal.style.display = 'block'
-            subtotal.innerHTML = `Subtotal: <strong>${qty * PRICE_PER_CAN} lei</strong> (${qty} doze)`
+            subtotal.innerHTML = `Subtotal: <strong>${qty * price} lei</strong> (${qty} doze)`
         } else {
             subtotal.style.display = 'none'
         }
@@ -166,9 +176,16 @@ function calculateTotalCans() {
     return Object.values(cansCart).reduce((a, b) => a + b, 0)
 }
 
+function calculateTotalPrice() {
+    return CANS_CATALOG.reduce((sum, can) => {
+        const qty = cansCart[can.id] || 0
+        return sum + (qty * can.price)
+    }, 0)
+}
+
 function updateTotals() {
     const totalCans = calculateTotalCans()
-    const totalPrice = totalCans * PRICE_PER_CAN
+    const totalPrice = calculateTotalPrice()
     const remaining = Math.max(0, MIN_ORDER_CANS - totalCans)
 
     // Actualizare contoare în bara flotantă / de control
@@ -246,14 +263,14 @@ function renderCheckoutSummary() {
         const q = cansCart[c.id]
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px dashed var(--glass-border); font-size: 0.95rem;">
-                <span style="font-weight: 600; color: var(--text-main);">${q}x ${c.name}</span>
-                <span style="color: var(--primary-green); font-weight: 700;">${q * PRICE_PER_CAN} lei</span>
+                <span style="font-weight: 600; color: var(--text-main);">${q}x ${c.name} (${c.price} lei/buc)</span>
+                <span style="color: var(--primary-green); font-weight: 700;">${q * c.price} lei</span>
             </div>
         `
     }).join('')
 
     const totalCans = calculateTotalCans()
-    const totalPrice = totalCans * PRICE_PER_CAN
+    const totalPrice = calculateTotalPrice()
     if (finalCountEl) finalCountEl.textContent = `${totalCans} doze`
     if (finalPriceEl) finalPriceEl.textContent = `${totalPrice} lei`
 }
@@ -324,10 +341,10 @@ function setupFormSubmission() {
 
         const selectedDrinksList = CANS_CATALOG
             .filter(c => (cansCart[c.id] || 0) > 0)
-            .map(c => `${cansCart[c.id]}x ${c.name} (${cansCart[c.id] * PRICE_PER_CAN} lei)`)
+            .map(c => `${cansCart[c.id]}x ${c.name} (${cansCart[c.id] * c.price} lei - ${c.price} lei/buc)`)
             .join('\n')
 
-        const totalPrice = totalCans * PRICE_PER_CAN
+        const totalPrice = calculateTotalPrice()
 
         const detaliiComandaText = `--- COMANDĂ DOZE LIVRARE LA DOMICILIU ---
 Total Doze: ${totalCans} buc
@@ -359,6 +376,23 @@ ${mentiuni ? `MENȚIUNI CLIENT:\n${mentiuni}` : ''}`
 
         try {
             await SupabaseService.createOffer(record)
+
+            // Trimite notificare email automată către pressocoffeecart@yahoo.com
+            sendDozeOrderEmail({
+                orderId: record.id,
+                nume,
+                telefon,
+                email,
+                adresa,
+                dataLivrare,
+                oraLivrare,
+                totalCans,
+                totalPrice,
+                metodaPlataText,
+                metodaPlata,
+                selectedDrinksList,
+                mentiuni
+            }).catch(err => console.warn('Email notification error:', err))
 
             // Salvează și local pentru referință
             localStorage.setItem('presso_last_doze_order', JSON.stringify({

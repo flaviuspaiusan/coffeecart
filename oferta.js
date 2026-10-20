@@ -1,4 +1,5 @@
 import { SupabaseService } from './supabase.js'
+import { sendOfferEmail } from './emailService.js'
 
 document.getElementById('oferta-form').addEventListener('submit', async function(e) {
     e.preventDefault()
@@ -23,6 +24,9 @@ document.getElementById('oferta-form').addEventListener('submit', async function
 
     try {
         await SupabaseService.createOffer(oferta)
+
+        // Trimite notificare email automată către pressocoffeecart@yahoo.com
+        sendOfferEmail(oferta).catch(err => console.warn('Email notification error:', err))
 
         const successMsg = document.getElementById('success-message')
         successMsg.style.display = 'block'
