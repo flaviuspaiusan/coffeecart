@@ -99,8 +99,8 @@
         </div>
 
         <div id="unauthorized-banner" style="display: none; padding: 1.5rem; background: rgba(93, 122, 78, 0.05); border: 1px dashed var(--primary-green); border-radius: var(--card-radius); margin-bottom: 2rem; text-align: center; font-family: 'Inter', sans-serif;">
-            <p style="font-weight: 700; color: var(--primary-green); margin-bottom: 0.3rem; font-size: 1.05rem;">Meniu în mod vizualizare 👁️</p>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!</p>
+            <p id="unauthorized-title" style="font-weight: 700; color: var(--primary-green); margin-bottom: 0.3rem; font-size: 1.05rem;">Meniu în mod vizualizare 👁️</p>
+            <p id="unauthorized-desc" style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!</p>
             <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--glass-border); font-size: 0.92rem;">
                 <span style="color: var(--text-main);">Vrei doze gata ambalate livrate acasă sau la birou?</span>
                 <a href="/#doze" style="color: var(--primary-green); font-weight: 700; text-decoration: underline; margin-left: 0.35rem;">Comandă doze la domiciliu (min. 20 buc) &rarr;</a>
@@ -108,8 +108,169 @@
         </div>
 
         <div class="menu-grid" id="menu-grid">
-            <!-- Items injected by JS -->
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/iced_coffee_image_1778599653110.webp" alt="Iced Coffee" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Iced Coffee</h3>
+                    <p class="card-desc">360 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/espresso_image_1778599544907.webp" alt="Espresso" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Espresso</h3>
+                    <p class="card-desc">20/40 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/espresso_image_1778599544907.webp" alt="Presso" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Presso</h3>
+                    <p class="card-desc">Băutură semnătură</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/cortado_image_1778599592329.webp" alt="Cortado" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Cortado</h3>
+                    <p class="card-desc">80 ml (1 shot espresso + crema lapte)</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/americano_image_1778599576520.webp" alt="Americano" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Americano</h3>
+                    <p class="card-desc">100 ml (1 shot espresso + apa fierbinte)</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/cappuccino_image_1778599606617.webp" alt="Cappuccino" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Cappuccino</h3>
+                    <p class="card-desc">180 ml (1 shot espresso + crema lapte)</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/flat_white_image_1778599620528.webp" alt="Flat White" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Flat White</h3>
+                    <p class="card-desc">180 ml (2 shot-uri espresso + crema lapte)</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/latte_macchiato_image_1778599636109.webp" alt="Latte Macchiato" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Latte Macchiato</h3>
+                    <p class="card-desc">250 ml (1 shot espresso + crema lapte)</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/pistachio_latte_image_1778599667717.webp" alt="Pistachio Strawberry Iced Latte" class="card-image" style="object-position: center 85%;" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Pistachio Strawberry Iced Latte</h3>
+                    <p class="card-desc">360 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/tiramisu_latte_image_1778599682616.webp" alt="Tiramisu Iced Latte" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Tiramisu Iced Latte</h3>
+                    <p class="card-desc">360 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/cold_brew_tonic_image_1778599699004.webp" alt="Cold Brew Tonic" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Cold Brew Tonic</h3>
+                    <p class="card-desc">360 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/tropical_cold_brew_image_1778599721744.webp" alt="Tropical Cold Brew" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Tropical Cold Brew</h3>
+                    <p class="card-desc">360 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/pumpkin_spice_latte.webp" alt="Pumpkin Spice Latte" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Pumpkin Spice Latte</h3>
+                    <p class="card-desc">380 ml</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-image-container">
+                    <img src="/assets/ube_latte.webp" alt="Ube Latte" class="card-image" loading="lazy" width="280" height="280">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Ube Latte</h3>
+                    <p class="card-desc">380 ml</p>
+                </div>
+            </div>
         </div>
+
+        <!-- SECȚIUNE DOZE ARTIZANALE LA DOMICILIU (DIN SNIP) -->
+        <section class="cans-header" style="margin-top: 4.5rem; margin-bottom: 2rem; padding: 2.5rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--card-radius); text-align: center;">
+            <span class="section-eyebrow">Nou · Livrare Direct la Ușă</span>
+            <h2 class="section-title" style="margin-bottom: 1rem;">Doze Artizanale Presso<br><em>Gata Ambalate la Domiciliu</em></h2>
+            <p class="section-body" style="max-width: 720px; margin: 0 auto 1.5rem auto; font-size: 1.05rem; line-height: 1.6;">
+                Bucură-te de gustul inconfundabil Presso oriunde: acasă, la birou sau la evenimentul tău privat. 
+                Băuturile noastre semnătură sunt preparate proaspăt din cafea de specialitate și sigilate în doze artizanale.
+            </p>
+
+            <div class="cans-badges-row" style="margin-bottom: 2rem;">
+                <div class="can-pill-badge">
+                    <span class="can-pill-icon">🏷️</span>
+                    <span><strong>22 - 25 lei</strong> / doză</span>
+                </div>
+                <div class="can-pill-badge">
+                    <span class="can-pill-icon">📦</span>
+                    <span>Comandă minimă: <strong>20 doze</strong> (mix liber)</span>
+                </div>
+                <div class="can-pill-badge">
+                    <span class="can-pill-icon">🚚</span>
+                    <span>Livrare programată <strong>(minim 24h în avans)</strong></span>
+                </div>
+                <div class="can-pill-badge">
+                    <span class="can-pill-icon">💳</span>
+                    <span>Plată <strong>Cash la livrare</strong> sau <strong>Transfer bancar</strong></span>
+                </div>
+            </div>
+
+            <div>
+                <a href="/#doze" class="btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.95rem 2rem; font-size: 1rem;">
+                    <span>Comandă doze la domiciliu</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </section>
     </main>
 
     <!-- Checkout Modal -->

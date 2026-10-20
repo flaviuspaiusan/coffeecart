@@ -17,20 +17,20 @@ function getImageUrl(imagePath) {
 }
 
 const defaultMenuItems = [
-    { id: 'espresso', name: 'Espresso', desc: '20/40 ml', image: '/assets/espresso_image_1778599544907.png' },
-    { id: 'presso', name: 'Presso', desc: 'Băutură semnătură', image: '/assets/espresso_image_1778599544907.png' },
-    { id: 'cortado', name: 'Cortado', desc: '80 ml (1 shot espresso + crema lapte)', image: '/assets/cortado_image_1778599592329.png' },
-    { id: 'americano', name: 'Americano', desc: '100 ml (1 shot espresso + apa fierbinte)', image: '/assets/americano_image_1778599576520.png' },
-    { id: 'cappuccino', name: 'Cappuccino', desc: '180 ml (1 shot espresso + crema lapte)', image: '/assets/cappuccino_image_1778599606617.png' },
-    { id: 'flat_white', name: 'Flat White', desc: '180 ml (2 shot-uri espresso + crema lapte)', image: '/assets/flat_white_image_1778599620528.png' },
-    { id: 'latte_macchiato', name: 'Latte Macchiato', desc: '250 ml (1 shot espresso + crema lapte)', image: '/assets/latte_macchiato_image_1778599636109.png' },
-    { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: '/assets/iced_coffee_image_1778599653110.png' },
-    { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.png' },
-    { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.png' },
+    { id: 'espresso', name: 'Espresso', desc: '20/40 ml', image: '/assets/espresso_image_1778599544907.webp' },
+    { id: 'presso', name: 'Presso', desc: 'Băutură semnătură', image: '/assets/espresso_image_1778599544907.webp' },
+    { id: 'cortado', name: 'Cortado', desc: '80 ml (1 shot espresso + crema lapte)', image: '/assets/cortado_image_1778599592329.webp' },
+    { id: 'americano', name: 'Americano', desc: '100 ml (1 shot espresso + apa fierbinte)', image: '/assets/americano_image_1778599576520.webp' },
+    { id: 'cappuccino', name: 'Cappuccino', desc: '180 ml (1 shot espresso + crema lapte)', image: '/assets/cappuccino_image_1778599606617.webp' },
+    { id: 'flat_white', name: 'Flat White', desc: '180 ml (2 shot-uri espresso + crema lapte)', image: '/assets/flat_white_image_1778599620528.webp' },
+    { id: 'latte_macchiato', name: 'Latte Macchiato', desc: '250 ml (1 shot espresso + crema lapte)', image: '/assets/latte_macchiato_image_1778599636109.webp' },
+    { id: 'iced_coffee', name: 'Iced Coffee', desc: '360 ml', image: '/assets/iced_coffee_image_1778599653110.webp' },
+    { id: 'pistachio_latte', name: 'Pistachio Strawberry Iced Latte', desc: '360 ml', image: '/assets/pistachio_latte_image_1778599667717.webp' },
+    { id: 'tiramisu_latte', name: 'Tiramisu Iced Latte', desc: '360 ml', image: '/assets/tiramisu_latte_image_1778599682616.webp' },
     { id: 'pumpkin_spice_latte', name: 'Pumpkin Spice Latte', desc: '380 ml', image: '/assets/pumpkin_spice_latte.webp' },
     { id: 'ube_latte', name: 'Ube Latte', desc: '380 ml', image: '/assets/ube_latte.webp' },
-    { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.png' },
-    { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.png' }
+    { id: 'cold_brew_tonic', name: 'Cold Brew Tonic', desc: '360 ml', image: '/assets/cold_brew_tonic_image_1778599699004.webp' },
+    { id: 'tropical_cold_brew', name: 'Tropical Cold Brew', desc: '360 ml', image: '/assets/tropical_cold_brew_image_1778599721744.webp' }
 ]
 
 const notifiedOrdersKey = 'my_notified_order_ids'
@@ -240,22 +240,33 @@ function renderMenu() {
     // Control the visibility of the unauthorized banner
     const unauthorizedBanner = document.getElementById('unauthorized-banner')
     if (unauthorizedBanner) {
+        const titleEl = document.getElementById('unauthorized-title') || unauthorizedBanner.querySelector('p')
+        const descEl = document.getElementById('unauthorized-desc') || unauthorizedBanner.querySelectorAll('p')[1]
+
         if (!hasScanAccess) {
             // Direct visitors - always show view-only scan message
             unauthorizedBanner.style.display = 'block'
-            unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Meniu în mod vizualizare 👁️'
-            unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!'
+            if (titleEl) {
+                titleEl.innerHTML = 'Meniu în mod vizualizare 👁️'
+                titleEl.style.color = 'var(--primary-green)'
+            }
+            if (descEl) {
+                descEl.innerHTML = 'Comenzile sunt deschise doar pentru invitații prezenți la eveniment. Scanează codul QR de pe barul Coffee Cart pentru a plasa o comandă!'
+            }
             unauthorizedBanner.style.borderColor = 'var(--primary-green)'
             unauthorizedBanner.style.background = 'rgba(93, 122, 78, 0.05)'
-            unauthorizedBanner.querySelector('p:first-child').style.color = 'var(--primary-green)'
         } else if (!hasActiveEvent) {
             // QR visitors, but no active event running
             unauthorizedBanner.style.display = 'block'
-            unauthorizedBanner.querySelector('p:first-child').innerHTML = 'Comenzi închise ☕'
-            unauthorizedBanner.querySelector('p:last-child').innerHTML = 'Momentan nu se pot plasa comenzi. Ne vedem la următorul eveniment!'
+            if (titleEl) {
+                titleEl.innerHTML = 'Comenzi închise ☕'
+                titleEl.style.color = '#e53e3e'
+            }
+            if (descEl) {
+                descEl.innerHTML = 'Momentan nu se pot plasa comenzi. Ne vedem la următorul eveniment!'
+            }
             unauthorizedBanner.style.borderColor = '#e53e3e'
             unauthorizedBanner.style.background = 'rgba(229, 62, 62, 0.05)'
-            unauthorizedBanner.querySelector('p:first-child').style.color = '#e53e3e'
         } else {
             // QR visitors AND active event -> can order!
             unauthorizedBanner.style.display = 'none'
@@ -294,15 +305,13 @@ function renderMenu() {
         card.className = 'card'
         
         const imageClickAttr = canOrder ? `onclick="openModal('${item.id}')" style="cursor: pointer;"` : ''
-        const priceText = getItemPrice(item)
         
         card.innerHTML = `
             <div class="card-image-container" ${imageClickAttr}>
-                <img src="${getImageUrl(item.image)}" alt="${item.name}" class="card-image" ${item.id === 'pistachio_latte' ? 'style="object-position: center 85%;"' : ''}>
+                <img src="${getImageUrl(item.image)}" alt="${item.name}" class="card-image" ${item.id === 'pistachio_latte' ? 'style="object-position: center 85%;"' : ''} loading="lazy" width="280" height="280">
             </div>
             <div class="card-content">
                 <h3 class="card-title">${item.name}</h3>
-                ${(priceText && hasScanAccess) ? `<p class="card-price">${priceText}</p>` : ''}
                 <p class="card-desc">${item.desc}</p>
                 ${canOrder ? `<button class="btn" onclick="openModal('${item.id}')">Comandă</button>` : ''}
             </div>
