@@ -448,7 +448,7 @@
             <nav class="header-nav" aria-label="Navigare principală">
                 <a href="/" class="nav-link active">Acasă</a>
                 <a href="/meniu" class="nav-link">Meniu</a>
-                <a href="#doze" class="nav-link">Doze</a>
+                <a href="#doze" class="nav-link">Doze la domiciliu</a>
                 <a href="/oferta" class="nav-link">Coffee cart la evenimentul meu</a>
             </nav>
         </div>
@@ -468,7 +468,7 @@
             <div class="hero-actions">
                 <a href="/oferta" class="btn" style="padding: 0.9rem 2.2rem; font-size: 1rem; text-decoration: none; display: inline-block;">Coffee cart la evenimentul meu</a>
                 <a href="/meniu" class="btn-outline">Meniu</a>
-                <a href="#doze" class="btn-outline">Doze la Domiciliu</a>
+                <a href="#doze" class="btn-outline">Doze la domiciliu</a>
             </div>
             <div class="hero-scroll-hint">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
@@ -566,9 +566,18 @@
             <div class="cans-header">
                 <span class="section-eyebrow">Nou · Livrare Direct la Ușă</span>
                 <h2 class="section-title" id="doze-title">Doze Artizanale Presso<br><em>Gata Ambalate la Domiciliu</em></h2>
+                <p class="section-body" style="max-width: 680px; margin: 0 auto 1.5rem auto;">
+                    Bucură-te de gustul inconfundabil Presso oriunde: acasă, la birou sau la evenimentul tău privat. 
+                    Băuturile noastre semnătură sunt preparate proaspăt din cafea de specialitate și sigilate în doze artizanale.
+                </p>
             </div>
 
-            <!-- Bara de stare & comandă minimă (Sticky / persistent) -->
+            <!-- Grila de produse (Doze) -->
+            <div class="doze-grid" id="doze-grid">
+                <!-- Generat automat din CANS_CATALOG în doze.js -->
+            </div>
+
+            <!-- Bara de stare & comandă minimă -->
             <aside class="doze-cart-bar" aria-label="Sumar selecție doze">
                 <div class="doze-bar-content">
                     <div class="doze-bar-info">
@@ -593,11 +602,6 @@
                     </button>
                 </div>
             </aside>
-
-            <!-- Grila de produse (Doze) -->
-            <div class="doze-grid" id="doze-grid">
-                <!-- Generat automat din CANS_CATALOG în doze.js -->
-            </div>
 
             <!-- SECȚIUNE FINALIZARE COMANDĂ (Checkout) -->
             <div id="doze-checkout-section" class="doze-checkout-wrap" style="display: none;">
@@ -750,7 +754,7 @@
             <nav aria-label="Navigare subsol" style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
                 <a href="/" class="nav-link active">Acasă</a>
                 <a href="/meniu" class="nav-link">Meniu</a>
-                <a href="#doze" class="nav-link">Doze</a>
+                <a href="#doze" class="nav-link">Doze la domiciliu</a>
                 <a href="/oferta" class="nav-link">Coffee cart la evenimentul meu</a>
             </nav>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">

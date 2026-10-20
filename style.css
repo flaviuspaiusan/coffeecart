@@ -828,17 +828,13 @@ header p {
     color: var(--primary-green);
 }
 
-/* --- BARA DE STARE & CART STICKY --- */
+/* --- BARA DE STARE & CART --- */
 .doze-cart-bar {
-    position: sticky;
-    top: 75px;
-    z-index: 90;
     background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
     border-radius: 14px;
-    padding: 1rem 1.5rem;
+    padding: 1.2rem 1.6rem;
+    margin-top: 1rem;
     margin-bottom: 2.5rem;
     box-shadow: 0 6px 25px rgba(93, 122, 78, 0.08);
     transition: transform 0.25s, box-shadow 0.25s;
