@@ -36,7 +36,7 @@ export const CANS_CATALOG = [
     {
         id: 'iced_coffee',
         name: 'Iced Coffee',
-        shortDesc: 'Cafea de specialitate extrasă proaspăt, lapte rece și gheață, perfect echilibrată.',
+        shortDesc: 'Cafea de specialitate extrasă proaspăt, lapte și gheață, perfect echilibrată.',
         volume: '360 ml',
         color: '#4b382a',
         accentBg: 'rgba(75, 56, 42, 0.12)'
