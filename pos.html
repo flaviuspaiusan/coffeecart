@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Preluare Comenzi Cafea | Impact Coffee</title>
+    <link rel="icon" type="image/png" href="/assets/brand-logo.png?v=2">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+    <link rel="stylesheet" href="/bar-style.css">
+</head>
+<body class="theme-barista">
+    <div class="app-layout">
+        <!-- HEADER PRINCIPAL -->
+        <header class="app-header">
+            <a href="/pos.html" class="brand-section">
+                <img src="/assets/brand-logo.png" alt="Logo Impact Coffee" class="brand-logo-img">
+                <div class="brand-text">
+                    <h1>IMPACT COFFEE</h1>
+                    <span>Preluare Comenzi</span>
+                </div>
+            </a>
+
+            <!-- NAVIGARE ÎNTRE PAGINI (FĂRĂ EMOTICOANE) -->
+            <nav class="header-nav">
+                <a href="/pos.html" class="nav-tab-btn active">
+                    <span>Preluare Comenzi</span>
+                </a>
+                <a href="/barista.html" class="nav-tab-btn">
+                    <span>Ecran Barista</span>
+                </a>
+                <a href="/statistici.html" class="nav-tab-btn">
+                    <span>Statistici</span>
+                </a>
+            </nav>
+
+            <!-- STATISTICI RAPIDE & STATUS CONEXIUNE -->
+            <div class="header-actions">
+                <button type="button" class="stats-pill-btn" id="btn-open-stats" title="Vezi statistici băuturi">
+                    <span>Total băuturi:</span>
+                    <strong id="total-cups-header">0</strong>
+                </button>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span>Live Bar</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTAINER PAGINĂ POS -->
+        <main class="pos-container">
+            <!-- MENIUL CU BUTOANE MARI PENTRU BĂUTURI -->
+            <section aria-label="Meniu băuturi">
+                <div class="drinks-grid" id="drinks-grid">
+                    <!-- Cele 7 butoane mari generate din JS cu 'Trimite comanda' -->
+                </div>
+            </section>
+
+            <!-- SUMAR COMENZI RECENTE -->
+            <section style="margin-top: 1.5rem; background: var(--navy-surface); border: 1px solid var(--navy-border); border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--white);">
+                        Ultimele comenzi trimise
+                    </h3>
+                    <span style="font-size: 0.8rem; color: var(--text-light-muted);">Actualizare live</span>
+                </div>
+                <div id="recent-orders-list">
+                    <!-- Populat dinamic -->
+                </div>
+            </section>
+        </main>
+
+        <!-- NOTIFICARE CONFIRMARE TOAST -->
+        <div class="toast-notice" id="toast-notice">
+            <span id="toast-message">Comandă trimisă cu succes!</span>
+            <button type="button" class="toast-undo-btn" id="toast-undo-btn">Anulează</button>
+        </div>
+
+        <!-- MODAL STATISTICI -->
+        <div class="modal-overlay" id="stats-modal">
+            <div class="modal-content" style="background: var(--navy-surface); color: var(--white); border-color: var(--gold-primary);">
+                <button type="button" class="modal-close-btn" id="btn-close-stats" style="color: var(--white); background: rgba(255,255,255,0.1);" aria-label="Închide">✕</button>
+
+                <div class="stats-header-banner" style="border-bottom-color: var(--navy-border);">
+                    <div>
+                        <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--white);">
+                            Sumar Băuturi Servite
+                        </h2>
+                        <p style="color: var(--text-light-muted); font-size: 0.9rem; margin-top: 0.2rem;">
+                            Evidență în timp real pentru fiecare sortiment
+                        </p>
+                    </div>
+
+                    <div class="stats-total-box" style="background: var(--navy-dark);">
+                        <div class="stats-total-num" id="stats-total-display">0</div>
+                        <div class="stats-total-meta">
+                            <h4>TOTAL BĂUTURI</h4>
+                            <p>preparate & comandate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRILA CU CELE 7 BĂUTURI -->
+                <div class="drinks-stats-grid" id="stats-grid">
+                    <!-- Populat din JS -->
+                </div>
+
+                <div class="report-actions">
+                    <button type="button" class="btn-danger-outline" id="btn-reset-stats">
+                        Resetează contor (Zi nouă)
+                    </button>
+                    <a href="/statistici.html" class="btn-secondary" style="color: var(--gold-light); border-color: var(--gold-primary);">
+                        Deschide pagina completă de statistici
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/pos.js"></script>
+</body>
+</html>

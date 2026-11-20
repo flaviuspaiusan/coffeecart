@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-MP9R5JFL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Presso Coffee Cart</title>
@@ -35,6 +41,8 @@
             <button class="btn btn-secondary" id="tab-offers" onclick="switchTab('offers')" style="flex: 1; min-width: 120px;">Cereri Oferte</button>
             <button class="btn btn-secondary" id="tab-menu" onclick="switchTab('menu')" style="flex: 1; min-width: 120px;">Gestionare Meniu</button>
             <button class="btn btn-secondary" id="tab-events" onclick="switchTab('events')" style="flex: 1; min-width: 120px;">Evenimente Finalizate</button>
+            <a href="/pos.html" class="btn" style="flex: 1; min-width: 140px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; background: #042457; color: #AA8966; border: 1px solid #AA8966; font-weight: 700;">Preluare Comenzi</a>
+            <a href="/barista.html" class="btn" style="flex: 1; min-width: 140px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; background: #021435; color: #ffffff; border: 1px solid #163f85; font-weight: 700;">Ecran Barista</a>
         </div>
 
 
@@ -80,8 +88,57 @@
 
         <div id="section-offers" style="display: none;">
             <div class="admin-header">
-                <h2>Cereri Oferte Evenimente</h2>
-                <button class="btn btn-secondary" onclick="clearOffers()" style="width: auto;">Șterge toate cererile</button>
+                <h2>Cereri Oferte Evenimente & Comenzi Doze</h2>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="toggleNotificationSettings()" style="width: auto;">⚙️ Setări Notificări</button>
+                    <button class="btn btn-secondary" onclick="clearOffers()" style="width: auto;">Șterge toate cererile</button>
+                </div>
+            </div>
+
+            <!-- Card Configurare Notificări Email / Telegram -->
+            <div id="notification-settings-card" style="display: none; margin-bottom: 1.5rem; padding: 1.25rem 1.5rem; background: var(--glass-bg); border: 1px solid var(--primary-green); border-radius: 12px; font-family: 'Inter', sans-serif;">
+                <h3 style="margin-bottom: 0.5rem; color: var(--primary-green); font-size: 1.15rem;">Configurare Livrare Notificări (Email & Telegram)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.2rem; line-height: 1.45;">
+                    Yahoo Mail blochează adesea serverele proxy gratuite. Pentru a primi garantat notificările, adaugă un link gratuit de la <strong>Formspree</strong> sau un <strong>Bot de Telegram</strong>.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">
+                            1. Endpoint Email Formspree (sau Web3Forms)
+                        </label>
+                        <input type="text" id="setting-email-endpoint" placeholder="ex: https://formspree.io/f/mqkvpayo" style="width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main);">
+                        <small style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">
+                            Creează gratuit un formular pe <a href="https://formspree.io" target="_blank" style="color: var(--primary-green);">formspree.io</a> și lipește linkul aici.
+                        </small>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">
+                            2. Telegram Bot Token (Notificare instantă pe telefon)
+                        </label>
+                        <input type="text" id="setting-tg-token" placeholder="ex: 123456789:ABCdefGhIjklmNoPqRsTuvWxyz" style="width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main);">
+                        <small style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">
+                            Generat în 30 secunde în Telegram cu <strong>@BotFather</strong>.
+                        </small>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">
+                            Telegram Chat ID
+                        </label>
+                        <input type="text" id="setting-tg-chat" placeholder="ex: 987654321" style="width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--glass-border); border-radius: 8px; background: var(--bg-color); color: var(--text-main);">
+                        <small style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">
+                            Află ID-ul tău în Telegram trimițând un mesaj botului <strong>@userinfobot</strong>.
+                        </small>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="saveNotificationSettings()" style="width: auto; padding: 0.65rem 1.4rem;">Salvează Setările</button>
+                    <button class="btn btn-secondary" onclick="testNotificationSettings()" style="width: auto; padding: 0.65rem 1.4rem;">Trimite Test Notificare</button>
+                </div>
+                <div id="notification-save-feedback" style="margin-top: 0.75rem; font-size: 0.88rem; font-weight: 600;"></div>
             </div>
             
             <div class="orders-list" id="offers-list">

@@ -232,5 +232,12 @@ export const SupabaseService = {
             .channel('public:settings')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, callback)
             .subscribe()
+    },
+
+    subscribeToOffers(callback) {
+        return supabase
+            .channel('public:offers')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'offers' }, callback)
+            .subscribe()
     }
 }

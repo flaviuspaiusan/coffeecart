@@ -1,4 +1,5 @@
 import { SupabaseService } from './supabase.js'
+import { sendOfferEmail, sendTelegramNotification } from './emailService.js'
 
 const ordersList = document.getElementById('orders-list')
 const offersList = document.getElementById('offers-list')
@@ -43,10 +44,18 @@ async function initAdmin() {
         await loadActiveEvent()
 
         SupabaseService.subscribeToOrders(() => loadOrders())
+        SupabaseService.subscribeToOffers((payload) => {
+            loadOffers()
+            playOfferChime()
+            if (payload && payload.new) {
+                showDesktopAlert(payload.new)
+            }
+        })
         SupabaseService.subscribeToMenu(() => loadMenu())
         SupabaseService.subscribeToSettings(() => {
             loadActiveEvent()
         })
+        await loadNotificationSettings()
     } catch (err) {
         console.error('Admin initialization error:', err)
     }
@@ -708,6 +717,12 @@ document.getElementById('menu-form').addEventListener('submit', async function(e
 async function loadOffers() {
     try {
         const offers = await SupabaseService.getOffers()
+        const tabOffers = document.getElementById('tab-offers')
+        if (tabOffers) {
+            tabOffers.innerHTML = offers.length > 0 
+                ? `Cereri Oferte <span style="background: #e53e3e; color: white; border-radius: 10px; padding: 0.15rem 0.5rem; font-size: 0.8rem; margin-left: 0.35rem; font-weight: 700;">${offers.length}</span>`
+                : 'Cereri Oferte'
+        }
         renderOffers(offers)
     } catch (err) {
         console.error('Error loading offers:', err)
@@ -775,6 +790,176 @@ window.clearOffers = async function() {
             await loadOffers()
         } catch (err) {
             console.error('Error clearing offers:', err)
+        }
+    }
+}
+
+// ── NOTIFICATION & SOUND ALERTS ──
+function playOfferChime() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext
+        if (!AudioContext) return
+        const ctx = new AudioContext()
+        const now = ctx.currentTime
+
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(880, now) // A5
+        osc.frequency.exponentialRampToValueAtTime(1320, now + 0.15) // E6
+
+        gain.gain.setValueAtTime(0.3, now)
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8)
+
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+
+        osc.start(now)
+        osc.stop(now + 0.8)
+    } catch (e) {
+        console.warn('Audio chime could not play:', e)
+    }
+}
+
+function showDesktopAlert(offer) {
+    if (!offer) return
+    const isDoze = offer.id && offer.id.startsWith('doze_')
+    const title = isDoze ? '📦 Comandă Nouă Doze!' : '☕ Cerere Nouă Ofertă Coffee Cart!'
+    const body = `${offer.nume} (${offer.telefon || offer.email})\n${offer.locatie || ''}`
+
+    if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+            new Notification(title, { body, icon: '/favicon.svg' })
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification(title, { body, icon: '/favicon.svg' })
+                }
+            })
+        }
+    }
+}
+
+window.toggleNotificationSettings = function() {
+    const card = document.getElementById('notification-settings-card')
+    if (card) {
+        card.style.display = card.style.display === 'none' ? 'block' : 'none'
+    }
+}
+
+async function loadNotificationSettings() {
+    try {
+        const endpointInput = document.getElementById('setting-email-endpoint')
+        const tokenInput = document.getElementById('setting-tg-token')
+        const chatInput = document.getElementById('setting-tg-chat')
+
+        let endpoint = ''
+        let tgConfig = null
+
+        try {
+            endpoint = await SupabaseService.getSetting('presso_notification_endpoint')
+            const tgRaw = await SupabaseService.getSetting('presso_telegram_config')
+            if (tgRaw) {
+                tgConfig = typeof tgRaw === 'string' ? JSON.parse(tgRaw) : tgRaw
+            }
+        } catch (e) {
+            console.warn('Could not read settings from Supabase, checking localStorage:', e)
+        }
+
+        if (!endpoint && typeof localStorage !== 'undefined') {
+            endpoint = localStorage.getItem('presso_notification_endpoint') || ''
+        }
+        if (!tgConfig && typeof localStorage !== 'undefined') {
+            const localTg = localStorage.getItem('presso_telegram_config')
+            if (localTg) tgConfig = JSON.parse(localTg)
+        }
+
+        if (endpointInput && endpoint) endpointInput.value = endpoint
+        if (tokenInput && tgConfig?.botToken) tokenInput.value = tgConfig.botToken
+        if (chatInput && tgConfig?.chatId) chatInput.value = tgConfig.chatId
+    } catch (err) {
+        console.warn('Error in loadNotificationSettings:', err)
+    }
+}
+
+window.saveNotificationSettings = async function() {
+    const endpointInput = document.getElementById('setting-email-endpoint')
+    const tokenInput = document.getElementById('setting-tg-token')
+    const chatInput = document.getElementById('setting-tg-chat')
+    const feedback = document.getElementById('notification-save-feedback')
+
+    const endpoint = endpointInput ? endpointInput.value.trim() : ''
+    const botToken = tokenInput ? tokenInput.value.trim() : ''
+    const chatId = chatInput ? chatInput.value.trim() : ''
+
+    try {
+        if (feedback) {
+            feedback.style.color = 'var(--text-muted)'
+            feedback.textContent = 'Se salvează setările...'
+        }
+
+        // Save to Supabase
+        await SupabaseService.setSetting('presso_notification_endpoint', endpoint)
+        const tgJson = JSON.stringify({ botToken, chatId })
+        await SupabaseService.setSetting('presso_telegram_config', tgJson)
+
+        // Save to localStorage
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('presso_notification_endpoint', endpoint)
+            localStorage.setItem('presso_telegram_config', tgJson)
+        }
+
+        if (feedback) {
+            feedback.style.color = 'var(--primary-green)'
+            feedback.textContent = '✅ Setările au fost salvate cu succes! Notificările vor folosi aceste canale.'
+        }
+    } catch (err) {
+        console.error('Error saving notification settings:', err)
+        if (feedback) {
+            feedback.style.color = '#ef4444'
+            feedback.textContent = '❌ Eroare la salvare. Verificați conexiunea și reîncercați.'
+        }
+    }
+}
+
+window.testNotificationSettings = async function() {
+    const feedback = document.getElementById('notification-save-feedback')
+    if (feedback) {
+        feedback.style.color = 'var(--text-muted)'
+        feedback.textContent = 'Se trimite notificarea de test...'
+    }
+
+    const testOffer = {
+        id: 'test_' + Date.now(),
+        nume: 'Test Presso Admin',
+        email: 'pressocoffeecart@yahoo.com',
+        telefon: '0700000000',
+        companie: 'Test Configurare Notificări',
+        locatie: 'Timișoara (Test)',
+        data: new Date().toLocaleDateString('ro-RO'),
+        invitati: '100',
+        comentarii: 'Acesta este un test pentru a verifica primirea notificărilor.'
+    }
+
+    try {
+        const res = await sendOfferEmail(testOffer)
+        if (res && res.success) {
+            if (feedback) {
+                feedback.style.color = 'var(--primary-green)'
+                feedback.textContent = '✅ Test reușit! Notificarea a fost trimisă cu succes.'
+            }
+        } else {
+            if (feedback) {
+                feedback.style.color = '#eab308'
+                feedback.textContent = '⚠️ Trimiterea a fost declanșată. Verificați căsuța de mail (inclusiv Spam) sau Telegram.'
+            }
+        }
+    } catch (err) {
+        console.error('Test notification error:', err)
+        if (feedback) {
+            feedback.style.color = '#ef4444'
+            feedback.textContent = '❌ Eroare la trimiterea testului: ' + err.message
         }
     }
 }

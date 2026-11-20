@@ -16,7 +16,10 @@
     { "source": "/meniu.html", "destination": "/meniu", "statusCode": 301 },
     { "source": "/doze.html", "destination": "/doze", "statusCode": 301 },
     { "source": "/oferta.html", "destination": "/oferta", "statusCode": 301 },
-    { "source": "/admin.html", "destination": "/admin", "statusCode": 301 }
+    { "source": "/admin.html", "destination": "/admin", "statusCode": 301 },
+    { "source": "/pos.html", "destination": "/pos", "statusCode": 301 },
+    { "source": "/barista.html", "destination": "/barista", "statusCode": 301 },
+    { "source": "/statistici.html", "destination": "/statistici", "statusCode": 301 }
   ],
   "headers": [
     {
@@ -44,7 +47,7 @@
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
     },
     {
-      "source": "/admin",
+      "source": "/(admin|pos|barista|statistici)",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
         { "key": "Cache-Control", "value": "private, no-store" }
